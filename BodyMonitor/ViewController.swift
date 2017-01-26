@@ -9,19 +9,44 @@
 import UIKit
 import CoreBluetooth
 
+// global variables based off BLE specifications
+// first: service UUIDS
+let POLARH7_HRM_DEVICE_INFO_SERVICE_UUID = CBUUID(string: "180A")
+let POLARH7_HRM_HEART_RATE_SERVICE_UUID = CBUUID(string: "180D")
+let serviceUUIDS = [POLARH7_HRM_HEART_RATE_SERVICE_UUID, POLARH7_HRM_DEVICE_INFO_SERVICE_UUID]
+
+// second: characteristic UUIDs
+let POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID = CBUUID(string: "2A37")
+let POLARH7_HRM_MANUFACTURER_NAME_CHARACTERISTIC_UUID = CBUUID(string: "2A29")
+
+// get Bluetooth fired up
+let myManagerDelegate = MyCentralManagerDelegate()
+let myManager = CBCentralManager(delegate: myManagerDelegate, queue: nil)
+
 class ViewController: UIViewController {
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         print("View did load")
         // Do any additional setup after loading the view, typically from a nib.
-        var myManager: CBCentralManager!
+       // var myManager: CBCentralManager!
+        //let myManagerDelegate = MyCentralManagerDelegate()
         var myHeartMonitorPeripheral: CBPeripheral!
         var myFootPodPeripheral: CBPeripheral!
-        myManager = CBCentralManager(delegate: MyCentralManagerDelegate(), queue: nil)
-        // TODO: connect to peripheral
-        //myManager.connect(<#T##peripheral: CBPeripheral##CBPeripheral#>, options: <#T##[String : Any]?#>)
+        //myManager.delegate(MyCentralManagerDelegate)
+        //myManager = CBCentralManager(delegate: myManagerDelegate, queue: nil)
+        if (myManager.state == CBManagerState.poweredOn) {
+            let alertController = UIAlertController(title: "BodyMonitor", message: "Bluetooth Powered ON", preferredStyle: UIAlertControllerStyle.alert)
+            alertController.addAction(UIAlertAction(title: "Let's Get Started!", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alertController, animated: true, completion: nil)
+            print("Powered on!")
+        myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+        }
+        else {
+            print("State: ", myManager.state.rawValue)
+        }
         
     }
 
