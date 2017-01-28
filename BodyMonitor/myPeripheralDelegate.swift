@@ -14,4 +14,8 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         print("peripheral manager initializing")
     }
     
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        print()
+    }
+    
 }

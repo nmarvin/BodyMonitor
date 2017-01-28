@@ -28,25 +28,9 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         print("View did load")
-        // Do any additional setup after loading the view, typically from a nib.
-       // var myManager: CBCentralManager!
-        //let myManagerDelegate = MyCentralManagerDelegate()
-        var myHeartMonitorPeripheral: CBPeripheral!
-        var myFootPodPeripheral: CBPeripheral!
-        //myManager.delegate(MyCentralManagerDelegate)
-        //myManager = CBCentralManager(delegate: myManagerDelegate, queue: nil)
-        if (myManager.state == CBManagerState.poweredOn) {
-            let alertController = UIAlertController(title: "BodyMonitor", message: "Bluetooth Powered ON", preferredStyle: UIAlertControllerStyle.alert)
-            alertController.addAction(UIAlertAction(title: "Let's Get Started!", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alertController, animated: true, completion: nil)
-            print("Powered on!")
+        // begin scanning for the necessary devices
         myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
-        }
-        else {
-            print("State: ", myManager.state.rawValue)
-        }
         
     }
 
