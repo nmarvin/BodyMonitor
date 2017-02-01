@@ -1,5 +1,5 @@
 //
-//  myPeripheralDelegate.swift
+//  MyPeripheralDelegate.swift
 //  BodyMonitor
 //
 //  Created by Nicole Marvin on 1/21/17.
