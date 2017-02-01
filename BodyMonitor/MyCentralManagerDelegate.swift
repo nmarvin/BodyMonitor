@@ -14,9 +14,12 @@ var hrmPeripheral:CBPeripheral!
 var podPeripheral1:CBPeripheral!
 var podPeripheral2:CBPeripheral!
 
+// the peripheral delegate
+let myPeripheralDelegate = MyPeripheralDelegate()
+
 class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
     
-    override init () {
+    override init() {
         super.init()
         print("central manager initializing")
     }
@@ -40,49 +43,60 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
         // when Bluetooth powers on, begin scanning for peripherals
         case.poweredOn:
             print("BLE service is powered on")
-            central.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+            startScan(central)
         }
     }
     
-    // if a peripheral was discovered, connect to it (maybe later check what's already connected?)
+    // if a peripheral was discovered, connect to it
     // this method called when scanForPeripheral() finds a peripheral
     func centralManager(_ central: CBCentralManager, didDiscover: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        central.stopScan()
         let id = String(describing: didDiscover.identifier)
         print("Identifier: ", id)
         print("Name: ", didDiscover.name)
         //let currentServices = didDiscover.services
         tempPeripheral = didDiscover
-        tempPeripheral.delegate = MyPeripheralDelegate()
-        central.connect(tempPeripheral, options: nil)
-        /*if(currentServices?.contains(POLARH7_HRM_DEVICE_INFO_SERVICE_UUID)) {
-        hrmPeripheral = didDiscover
-        let peripheralDelegate = MyPeripheralDelegate()
-        connectingPeripheral.delegate = peripheralDelegate
-        central.connect(connectingPeripheral, options: nil)
-        }*/
+        tempPeripheral.delegate = myPeripheralDelegate
+        //central.connect(tempPeripheral, options: nil)
         
-
         if let device = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey)
             as? NSString
         {
         print("Device name : \(device)")
             // identify heart rate monitor
             if device.contains("Polar H7") {
-                storePeripheral(tempPeripheral, isHeartSensor: true)
+                if let permanentPeripheral = storePeripheral(tempPeripheral, isHeartSensor: true) {
+                    central.connect(permanentPeripheral, options: nil)
+                }
             }
         
-            else if device.contains("") {
-                storePeripheral(tempPeripheral, isHeartSensor: false)
+            else if device.contains("Polar RUN") {
+                if let permanentPeripheral = storePeripheral(tempPeripheral, isHeartSensor: false) {
+                    central.connect(permanentPeripheral, options: nil)
+                }
             }
         }
-        
+        if (hrmPeripheral == nil || podPeripheral1 == nil || podPeripheral2 == nil) {
+            startScan(central)
         }
+    }
     
     // called by a CBCentralManager when it connects to a peripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Successful Connection!")
-        // identify and permanently store the peripheral
-        //storePeripheral(tempPeripheral)
+        peripheral.delegate = myPeripheralDelegate
+        
+        // get services and initiate data reading
+        
+       /* if let services = peripheral.services {
+            print("peripheral has services")
+            if services.count > 0 {
+                for service in services {
+                    peripheral.discoverCharacteristics(characteristicUUIDS, for: service)
+                }
+            }
+        } else {print("no services available")} */
+        
     }
     
     // called by a CBCentralManager when it disconnects from a peripheral
@@ -90,35 +104,39 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
         if let realError = error {
             print("Error: \(realError)")
         }
-       /* if error != nil {
-            print("Error message: \(error)".self)
-        }*/
+       
         else {
             print("disconnected from Peripheral")
         }
     }
     
-    
-    // runs when connected to a peripheral
-    //func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-    //      <#code#>
-    //  }
+    // start scanning for peripherals
+    func startScan(_ central: CBCentralManager) {
+        print("starting scan")
+        central.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+    }
     
     // permanently store a peripheral
-    func storePeripheral(_ temporary: CBPeripheral, isHeartSensor:Bool) {
+    func storePeripheral(_ temporary: CBPeripheral, isHeartSensor:Bool) -> CBPeripheral? {
         if isHeartSensor {
-            hrmPeripheral = tempPeripheral
+            print("This is the heart sensor.")
+            hrmPeripheral = temporary
+            return hrmPeripheral
         }
         else if podPeripheral1 == nil {
-            podPeripheral1 = tempPeripheral
+            print("This is the first stride sensor.")
+            podPeripheral1 = temporary
+            return podPeripheral1
         }
         else if podPeripheral2 == nil {
-            podPeripheral2 = tempPeripheral
+            podPeripheral2 = temporary
+            return podPeripheral2
+        }
+        else {
+            print("Something went wrong!")
+            return nil
         }
     }
-    
-    
-        
-    }
+}
     
 
