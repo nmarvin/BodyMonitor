@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/MyCentralManagerDelegate.swift"
-            timestampString = "507608555.542285"
+            timestampString = "507756856.263138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "storePeripheral(_:isHeartSensor:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -70,15 +70,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/MyCentralManagerDelegate.swift"
-            timestampString = "507608555.542285"
+            timestampString = "507756634.01272"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "100"
-            endingLineNumber = "100"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
             landmarkName = "centralManager(_:didConnect:)"
             landmarkType = "7">
          </BreakpointContent>

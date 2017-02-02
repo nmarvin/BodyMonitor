@@ -17,7 +17,7 @@ var podPeripheral2:CBPeripheral!
 // the peripheral delegate
 let myPeripheralDelegate = MyPeripheralDelegate()
 
-class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
+class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     override init() {
         super.init()
@@ -37,7 +37,6 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
             print("BLE is Unknown")
         case.resetting:
             print("BLE is Resetting")
-        // TODO: eventually, this case should alert the user to turn on BLE
         case.poweredOff:
             print("BLE service is powered off")
         // when Bluetooth powers on, begin scanning for peripherals
@@ -49,13 +48,13 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
     
     // if a peripheral was discovered, connect to it
     // this method called when scanForPeripheral() finds a peripheral
-    func centralManager(_ central: CBCentralManager, didDiscover: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         central.stopScan()
-        let id = String(describing: didDiscover.identifier)
+        let id = String(describing: peripheral.identifier)
         print("Identifier: ", id)
-        print("Name: ", didDiscover.name)
+        print("Name: ", peripheral.name)
         //let currentServices = didDiscover.services
-        tempPeripheral = didDiscover
+        tempPeripheral = peripheral
         tempPeripheral.delegate = myPeripheralDelegate
         //central.connect(tempPeripheral, options: nil)
         
@@ -85,6 +84,7 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Successful Connection!")
         peripheral.delegate = myPeripheralDelegate
+        peripheral.discoverServices(nil)
         
         // get services and initiate data reading
         
@@ -112,8 +112,10 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate {
     
     // start scanning for peripherals
     func startScan(_ central: CBCentralManager) {
-        print("starting scan")
-        central.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+        if (hrmPeripheral == nil || podPeripheral1 == nil || podPeripheral2 == nil) {
+            print("starting scan")
+            central.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+        }
     }
     
     // permanently store a peripheral
