@@ -78,6 +78,9 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         if (hrmPeripheral == nil || podPeripheral1 == nil || podPeripheral2 == nil) {
             startScan(central)
         }
+        else {
+            print("All devices connected.")
+        }
     }
     
     // called by a CBCentralManager when it connects to a peripheral
@@ -86,17 +89,12 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         peripheral.delegate = myPeripheralDelegate
         peripheral.discoverServices(nil)
         
-        // get services and initiate data reading
-        
-       /* if let services = peripheral.services {
-            print("peripheral has services")
-            if services.count > 0 {
-                for service in services {
-                    peripheral.discoverCharacteristics(characteristicUUIDS, for: service)
-                }
-            }
-        } else {print("no services available")} */
-        
+    }
+    
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        if let realError = error {
+            print("Error: \(realError)")
+        }
     }
     
     // called by a CBCentralManager when it disconnects from a peripheral
@@ -131,6 +129,7 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
             return podPeripheral1
         }
         else if podPeripheral2 == nil {
+            print("This is the second stride sensor.")
             podPeripheral2 = temporary
             return podPeripheral2
         }
@@ -140,5 +139,3 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         }
     }
 }
-    
-
