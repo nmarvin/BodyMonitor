@@ -32,7 +32,7 @@ let hrmNotification = "Heart Rate Updated"
 let rsc1Notification = "RSC Updated, Pod 1"
 let rsc2Notification = "RSC Updated, Pod 2"
 
-// heart rate
+// display variables for sensor data
 var hrm: Int? = nil
 var speed1: Int? = nil
 var cadence1: Int? = nil
@@ -44,24 +44,15 @@ var strideLength2: Int? = nil
 var totalDistance2: Int? = nil
 
 class ViewController: UIViewController {
+    // variables for keeping time
+    var myTimer = Timer()
+    var startTime = TimeInterval()
+    var hours: Int = 0
+    var minutes: Int = 0
+    var seconds: Int = 0
+    var milliseconds: Int = 0
+    var timeIsRunning: Bool = false
     
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("View did load")
-        
-        // listen for notifications
-        NotificationCenter.default.addObserver(self, selector: #selector(displayHeartRate), name: NSNotification.Name(rawValue: hrmNotification), object: nil)
- 
-        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC1), name: NSNotification.Name(rawValue: rsc1Notification), object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC2), name: NSNotification.Name(rawValue: rsc2Notification), object: nil)
-        // begin scanning for the necessary devices
-        if myManager.state == .poweredOn {
-            myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
-        }
-    }
-
     @IBOutlet weak var heartRateLabel: UILabel!
     @IBOutlet weak var speed1Label: UILabel!
     @IBOutlet weak var cadence1Label: UILabel!
@@ -69,10 +60,39 @@ class ViewController: UIViewController {
     @IBOutlet weak var speed2Label: UILabel!
     @IBOutlet weak var cadence2Label: UILabel!
     @IBOutlet weak var distance2Label: UILabel!
-    
-    @IBAction func getStarted(_ sender: Any) {
-        myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+    @IBOutlet weak var mostSignificantTimeDigit: UILabel!
+    @IBOutlet weak var middleSignificantTimeDigit: UILabel!
+    @IBOutlet weak var timePunctuation: UILabel!
+    @IBOutlet weak var leastSignificantTimeDigit: UILabel!
+   
+    @IBAction func startTime(_ sender: Any) {
+        if !self.timeIsRunning {
+        myTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(ViewController.updateTime), userInfo: nil, repeats: true)
+            startTime = Date.timeIntervalSinceReferenceDate
+            self.timeIsRunning = true
+        }
     }
+    
+    @IBAction func stopTime(_ sender: Any) {
+        if self.timeIsRunning {
+            myTimer.invalidate()
+            timeIsRunning = false
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // listen for notifications from three sensors
+        NotificationCenter.default.addObserver(self, selector: #selector(displayHeartRate), name: NSNotification.Name(rawValue: hrmNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC1), name: NSNotification.Name(rawValue: rsc1Notification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC2), name: NSNotification.Name(rawValue: rsc2Notification), object: nil)
+        
+        // begin scanning for the necessary devices
+        if myManager.state == .poweredOn {
+            myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
+        }
+    }
+
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -119,5 +139,64 @@ class ViewController: UIViewController {
             distance2Label.text = String(currentDistance2)
         }
     }
+    
+    // display a new time
+    func updateTime() {
+        var currentTime = Date.timeIntervalSinceReferenceDate
+        var elapsedTime: TimeInterval = currentTime - startTime
+        
+        self.hours = Int(elapsedTime / (60 * 60)) // hours conversion = seconds * (1 minute / 60 seconds) * (1 hour / 60 minutes)
+        elapsedTime -= TimeInterval(hours) * 60 * 60
+        
+        self.minutes = Int(elapsedTime / 60)
+        elapsedTime -= TimeInterval(minutes) * 60
+        
+        self.seconds = Int(elapsedTime / 1)
+        elapsedTime -= TimeInterval(seconds)
+        
+        // get fractional seconds to two decimal places
+        self.milliseconds = Int(elapsedTime * 100)
+        displayTime();
+    }
 
+    // display time on the view
+    func displayTime() {
+        var millisecondsString: String
+        var secondsString: String
+        var minutesString: String
+        
+        if self.milliseconds < 10 {
+            millisecondsString = "0" + String(self.milliseconds)
+        }
+        else {
+            millisecondsString = String(self.milliseconds)
+        }
+        
+        if self.seconds < 10 {
+            secondsString = "0" + String(self.seconds)
+        }
+        else {
+            secondsString = String(self.seconds)
+        }
+        
+        if self.minutes < 10 {
+            minutesString = "0" + String(self.minutes)
+        }
+        else {
+            minutesString = String(self.minutes)
+        }
+        
+        if self.hours < 1 {
+            mostSignificantTimeDigit.text = minutesString
+            middleSignificantTimeDigit.text = secondsString
+            timePunctuation.text = "."
+            leastSignificantTimeDigit.text = millisecondsString
+        }
+        else {
+            mostSignificantTimeDigit.text = String(self.hours)
+            middleSignificantTimeDigit.text = minutesString
+            timePunctuation.text = ":"
+            leastSignificantTimeDigit.text = secondsString
+        }
+    }
 }

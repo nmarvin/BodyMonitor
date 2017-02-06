@@ -9,8 +9,17 @@
 import CoreBluetooth
 
 class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
+    
+    var distanceSupportedPod1: Bool = false
+    var distanceSupportedPod2: Bool = false
+    var walkRunStatusSupportedPod1: Bool = false
+    var walkRunStatusSupportedPod2: Bool = false
+    var calibrationSupportedPod1: Bool = false
+    var calibrationSupportedPod2: Bool = false
+    
     override init() {
         super.init()
+        
     }
     
     // called when a peripheral's services are discovered
@@ -74,7 +83,7 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         else if characteristic.uuid == POLAR_STRIDE_RSC_FEATURE_CHARACTERISTIC_UUID {
             // bits: 0 - instantaneous stride length supported; 1 - total distance supported; 2 - walk/run status supported; 3 - calibration supported; 4 - multiple locations supported
             if let currentRscFeature = characteristic.value {
-                getRscFeatureData(currentRscFeature)
+                getRscFeatureData(peripheral, currentRscFeature)
             }
             
         }
@@ -156,25 +165,34 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
 
     }
     
-    func getRscFeatureData(_ currentRscFeature: Data) {
-        var buffer = [UInt8](repeating: 0x0, count: 9)
-        var currentStrideLength = 0
-        var totalDistance = 0
-        if (buffer[0] & 0b00000001 == 1) {
-            if buffer.count >= 4 {
-                currentStrideLength = (Int(buffer[4]) << 8) + Int(buffer[3])
-            }
-            if (buffer[0] & 0b00000010 == 1) {
-                if buffer.count >= 8 {
-                    totalDistance = Int(buffer[8] << 24) + (Int(buffer[7]) << 16) + (Int(buffer[6]) << 8) + Int(buffer[5])
-                }
-            }
-        }
-        else if (buffer[0] & 0b00000010 == 1) {
-            if buffer.count >= 6 {
-                totalDistance = (Int(buffer[6]) << 24) + (Int(buffer[5]) << 16) + (Int(buffer[4]) << 8) + Int(buffer[3])
-            }
-        }
+    func getRscFeatureData(_ peripheral: CBPeripheral, _ currentRscFeature: Data) {
+        
+        var distanceSupported: Bool = false
+        var walkRunStatusSupported: Bool = false
+        var calibrationSupported: Bool = false
 
+        // check if total distance supported
+        if (currentRscFeature[0] & 0b00000010 == 1) {
+            distanceSupported = true
+        }
+        if (currentRscFeature[0] & 0b00000100 == 1) {
+            walkRunStatusSupported = true
+        }
+        if (currentRscFeature[0] & 0b00001000 == 1) {
+            calibrationSupported = true
+        }
+        
+        // update appropriate instance variables
+        if peripheral == podPeripheral1 {
+            self.distanceSupportedPod1 = distanceSupported
+            self.walkRunStatusSupportedPod1 = walkRunStatusSupported
+            self.calibrationSupportedPod1 = calibrationSupported
+        }
+        
+        else if peripheral == podPeripheral2 {
+            self.distanceSupportedPod2 = distanceSupported
+            self.walkRunStatusSupportedPod2 = walkRunStatusSupported
+            self.calibrationSupportedPod2 = calibrationSupported
+        }
     }
 }
