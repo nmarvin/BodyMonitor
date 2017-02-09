@@ -28,7 +28,6 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         if let realError = error {
             print("error: \(realError)")
         }
-        print("services discovered")
         if let services = peripheral.services {
             if services.count > 0 {
                 for service in services {
@@ -49,14 +48,6 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
                 else if characteristic.uuid.isEqual(POLAR_STRIDE_RSC_MEASUREMENT_CHARACTERISTIC_UUID) {
                     peripheral.setNotifyValue(true, for: characteristic)
                 }
-            }
-        }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        if (hrmPeripheral != nil) {
-            if (peripheral == hrmPeripheral) {
-                print("Subscribed to HRM")
             }
         }
     }
@@ -97,9 +88,9 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         
         // check first bit of the buffer. if 0, the heart rate is UInt8; otherwise, it's UInt16
         if buffer[0] & 0b00000001 == 0 {
-            hrm = Int(buffer[1]);
+            hrm = buffer[1]
         }else {
-            hrm = Int(buffer[1] << 8)
+            hrm = nil
         }
         // send a notification that new data is avaialble
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: hrmNotification), object: nil)
@@ -113,28 +104,31 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         currentRsc.copyBytes(to: &buffer, count: buffer.count)
         
         // get speed: UInt16
-        var currentSpeed = (Int(buffer[2]) << 8) + Int(buffer[1])
+        var currentSpeed = Double((Int(buffer[2]) << 8) + Int(buffer[1]))
         
         // get cadence: UInt8
-        var currentCadence = Int(buffer[3])
+        var currentCadence = buffer[3]
         
-        var currentStrideLength: Int? = nil
-        var totalDistance: Int? = nil
+        var currentStrideLength: Double? = nil
+        var totalDistance: Double? = nil
         
         // get instantaneous stride length and total distance
         if (buffer[0] & 0b00000001 == 1) {
             if buffer.count >= 4 {
-                currentStrideLength = (Int(buffer[4]) << 8) + Int(buffer[3])
+                var strideLength = Int(buffer[4]) << 8 + Int(buffer[3])
+                currentStrideLength = Double(strideLength)
             }
             if (buffer[0] & 0b00000010 == 1) {
-                if buffer.count >= 8 {
-                    totalDistance = (Int(buffer[8]) << 24) + (Int(buffer[7]) << 16) + (Int(buffer[6]) << 8) + Int(buffer[5])
+                if buffer.count >= 9 {
+                    let theDistance = Int(buffer[8]) << 24 + (Int(buffer[7]) << 16) + (Int(buffer[6]) << 8) + Int(buffer[5])
+                    totalDistance = Double(theDistance)
                 }
             }
         }
         else if (buffer[0] & 0b00000010 == 1) {
-            if buffer.count >= 6 {
-                totalDistance = (Int(buffer[6]) << 24) + (Int(buffer[5]) << 16) + (Int(buffer[4]) << 8) + Int(buffer[3])
+            if buffer.count >= 7 {
+                let theDistance = Int(buffer[6]) << 24 + (Int(buffer[5]) << 16) + (Int(buffer[4]) << 8) + Int(buffer[3])
+                totalDistance = Double(theDistance)
             }
         }
         
@@ -145,6 +139,7 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
                 strideLength1 = stride1
             }
             if let distance1 = totalDistance {
+                print("Distance: \(distance1)")
                 totalDistance1 = distance1
             }
             

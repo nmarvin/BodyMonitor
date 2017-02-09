@@ -197,7 +197,7 @@
                         <outlet property="heartRateLabel" destination="h78-me-yyK" id="vCo-q8-qsY"/>
                         <outlet property="leastSignificantTimeDigit" destination="9Im-tL-DCW" id="PZz-TX-J1I"/>
                         <outlet property="middleSignificantTimeDigit" destination="B3z-v1-pxl" id="mGR-MP-Af2"/>
-                        <outlet property="mostSignificantTimeDigit" destination="B3z-v1-pxl" id="Mme-ka-cm9"/>
+                        <outlet property="mostSignificantTimeDigit" destination="3Dd-TZ-cen" id="iOy-KS-tSx"/>
                         <outlet property="speed1Label" destination="ZPh-lR-Hpj" id="Bxv-Y4-FlK"/>
                         <outlet property="speed2Label" destination="M0e-Sr-Jjg" id="71i-Qw-P4w"/>
                         <outlet property="timePunctuation" destination="lFQ-Rb-dJt" id="7uf-DI-QP4"/>

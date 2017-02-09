@@ -21,11 +21,9 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
     
     override init() {
         super.init()
-        print("central manager initializing")
     }
     // for now, log the state to the console
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        print("State updated")
     switch (central.state)
         {
         case.unsupported:
@@ -59,7 +57,7 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         //central.connect(tempPeripheral, options: nil)
         
         if let device = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey)
-            as? NSString
+            as? String
         {
         print("Device name : \(device)")
             // identify heart rate monitor
@@ -79,13 +77,12 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
             startScan(central)
         }
         else {
-            print("All devices connected.")
+            print("All three devices connected")
         }
     }
     
     // called by a CBCentralManager when it connects to a peripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        print("Successful Connection!")
         peripheral.delegate = myPeripheralDelegate
         peripheral.discoverServices(nil)
         
@@ -111,7 +108,6 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
     // start scanning for peripherals
     func startScan(_ central: CBCentralManager) {
         if (hrmPeripheral == nil || podPeripheral1 == nil || podPeripheral2 == nil) {
-            print("starting scan")
             central.scanForPeripherals(withServices: serviceUUIDS, options: nil)
         }
     }
@@ -119,22 +115,18 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
     // permanently store a peripheral
     func storePeripheral(_ temporary: CBPeripheral, isHeartSensor:Bool) -> CBPeripheral? {
         if isHeartSensor {
-            print("This is the heart sensor.")
             hrmPeripheral = temporary
             return hrmPeripheral
         }
         else if podPeripheral1 == nil {
-            print("This is the first stride sensor.")
             podPeripheral1 = temporary
             return podPeripheral1
         }
         else if podPeripheral2 == nil {
-            print("This is the second stride sensor.")
             podPeripheral2 = temporary
             return podPeripheral2
         }
         else {
-            print("Something went wrong!")
             return nil
         }
     }

@@ -6,7 +6,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/MyCentralManager.swift"
@@ -22,7 +22,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/MyCentralManager.swift"
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/ViewController.swift"
-            timestampString = "508042781.427225"
+            timestampString = "508347200.532476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/MyCentralManagerDelegate.swift"
-            timestampString = "507852646.664904"
+            timestampString = "508349046.009957"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "133"
-            endingLineNumber = "133"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "storePeripheral(_:isHeartSensor:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BodyMonitor/MyCentralManagerDelegate.swift"
-            timestampString = "507852646.664904"
+            timestampString = "508349046.009957"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
             landmarkName = "MyCentralManagerDelegate"
             landmarkType = "3">
          </BreakpointContent>
@@ -103,14 +103,76 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BodyMonitor/MyCentralManagerDelegate.swift"
-            timestampString = "507852646.664904"
+            filePath = "BodyMonitor/ViewController.swift"
+            timestampString = "508343713.130212"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
-            landmarkName = "storePeripheral(_:isHeartSensor:)"
-            landmarkType = "7">
+            startingLineNumber = "47"
+            endingLineNumber = "47"
+            landmarkName = "ViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BodyMonitor.ViewController.__deallocating_deinit"
+                  moduleName = "BodyMonitor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nicolemarvin/Desktop/BodyMonitor/BodyMonitor/ViewController.swift"
+                  timestampString = "508345453.258903"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BodyMonitor.ViewController.init (nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;__ObjC.Bundle&gt;) -&gt; BodyMonitor.ViewController"
+                  moduleName = "BodyMonitor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nicolemarvin/Desktop/BodyMonitor/BodyMonitor/ViewController.swift"
+                  timestampString = "508345453.26105"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "57">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BodyMonitor.ViewController.__allocating_init (nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;__ObjC.Bundle&gt;) -&gt; BodyMonitor.ViewController"
+                  moduleName = "BodyMonitor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nicolemarvin/Desktop/BodyMonitor/BodyMonitor/ViewController.swift"
+                  timestampString = "508345453.26329"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "23">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BodyMonitor.ViewController.init (coder : __ObjC.NSCoder) -&gt; Swift.Optional&lt;BodyMonitor.ViewController&gt;"
+                  moduleName = "BodyMonitor"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/nicolemarvin/Desktop/BodyMonitor/BodyMonitor/ViewController.swift"
+                  timestampString = "508345453.266317"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "19">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

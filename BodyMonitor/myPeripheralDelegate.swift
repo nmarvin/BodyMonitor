@@ -9,13 +9,22 @@
 import CoreBluetooth
 
 class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
+    
+    var distanceSupportedPod1: Bool = false
+    var distanceSupportedPod2: Bool = false
+    var walkRunStatusSupportedPod1: Bool = false
+    var walkRunStatusSupportedPod2: Bool = false
+    var calibrationSupportedPod1: Bool = false
+    var calibrationSupportedPod2: Bool = false
+    
     override init() {
         super.init()
-        print("peripheral manager initializing")
+        
     }
     
+    // called when a peripheral's services are discovered
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        print("services discovered")
+        
         if let realError = error {
             print("error: \(realError)")
         }
@@ -28,25 +37,18 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         }
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverIncludedServicesFor service: CBService, error: Error?) {
-        print("included services discovered")
-    }
-    
     // get notifications from desired characteristics
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        // look if there is a HRM characteristic and subscribe
+        // look for the characteristics of interest and subsctibe
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 if characteristic.uuid.isEqual(POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID) {
                     peripheral.setNotifyValue(true, for: characteristic)
                 }
+                else if characteristic.uuid.isEqual(POLAR_STRIDE_RSC_MEASUREMENT_CHARACTERISTIC_UUID) {
+                    peripheral.setNotifyValue(true, for: characteristic)
+                }
             }
-        }
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        if (peripheral == hrmPeripheral) {
-            print("Subscribed to HRM")
         }
     }
     
@@ -57,25 +59,135 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
             print("Error: \(theError)")
         }
         else if peripheral == hrmPeripheral && characteristic.uuid == POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID {
-            var heartRateData = characteristic.value
-            
-            if let currentHeartRate = heartRateData {
-                
-                // do some low-level stuff to convert the bits into a heart rate measurement
-                var buffer = [UInt8](repeating: 0x0, count: currentHeartRate.count)
-                currentHeartRate.copyBytes(to: &buffer, count:buffer.count)
-                
-                // check first bit of the buffer. if 0, the heart rate is UInt8; otherwise, it's UInt16
-                if buffer[0] & 0x01 == 0 {
-                    hrm = Int(buffer[1]);
-                }
-                else {
-                    hrm = Int(buffer[1] << 8)
-                }
-                print("displaying heart rate!")
-                // send a notification that new data is avaialble
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: hrmNotification), object: nil)
+            if let currentHeartRate = characteristic.value {
+                getHeartRateData(currentHeartRate)
             }
+        }
+        
+        else if characteristic.uuid == POLAR_STRIDE_RSC_MEASUREMENT_CHARACTERISTIC_UUID {
+            if let currentRsc = characteristic.value {
+                getRscData(peripheral, currentRsc)
+            }
+            
+        }
+        
+        else if characteristic.uuid == POLAR_STRIDE_RSC_FEATURE_CHARACTERISTIC_UUID {
+            // bits: 0 - instantaneous stride length supported; 1 - total distance supported; 2 - walk/run status supported; 3 - calibration supported; 4 - multiple locations supported
+            if let currentRscFeature = characteristic.value {
+                getRscFeatureData(peripheral, currentRscFeature)
+            }
+            
+        }
+    }
+    
+    func getHeartRateData(_ currentHeartRate: Data) {
+        
+        // do some low-level stuff to convert the bits into a heart rate measurement
+        var buffer = [UInt8](repeating: 0x0, count: currentHeartRate.count)
+        currentHeartRate.copyBytes(to: &buffer, count:buffer.count)
+        
+        // check first bit of the buffer. if 0, the heart rate is UInt8; otherwise, it's UInt16
+        if buffer[0] & 0b00000001 == 0 {
+            hrm = buffer[1]
+        }else {
+            hrm = nil
+        }
+        // send a notification that new data is avaialble
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: hrmNotification), object: nil)
+        
+    }
+    
+    func getRscData(_ peripheral: CBPeripheral, _ currentRsc: Data) {
+        // bits: 0 - instantaneous stride length present; 1 - total distance present; 2 - 0 for walk; 1 for run
+        // convert bits into speed and cadence
+        var buffer = [UInt8](repeating: 0x0, count: currentRsc.count)
+        currentRsc.copyBytes(to: &buffer, count: buffer.count)
+        
+        // get speed: UInt16
+        var currentSpeed = Double((Int(buffer[2]) << 8) + Int(buffer[1]))
+        
+        // get cadence: UInt8
+        var currentCadence = buffer[3]
+        
+        var currentStrideLength: Double? = nil
+        var totalDistance: Double? = nil
+        
+        // get instantaneous stride length and total distance
+        if (buffer[0] & 0b00000001 == 1) {
+            if buffer.count >= 4 {
+                var strideLength = Int(buffer[4]) << 8 + Int(buffer[3])
+                currentStrideLength = Double(strideLength)
+            }
+            if (buffer[0] & 0b00000010 == 1) {
+                if buffer.count >= 9 {
+                    let theDistance = Int(buffer[8]) << 24 + (Int(buffer[7]) << 16) + (Int(buffer[6]) << 8) + Int(buffer[5])
+                    totalDistance = Double(theDistance)
+                }
+            }
+        }
+        else if (buffer[0] & 0b00000010 == 1) {
+            if buffer.count >= 7 {
+                let theDistance = Int(buffer[6]) << 24 + (Int(buffer[5]) << 16) + (Int(buffer[4]) << 8) + Int(buffer[3])
+                totalDistance = Double(theDistance)
+            }
+        }
+        
+        if peripheral == podPeripheral1 {
+            speed1 = currentSpeed
+            cadence1 = currentCadence
+            if let stride1 = currentStrideLength {
+                strideLength1 = stride1
+            }
+            if let distance1 = totalDistance {
+                print("Distance: \(distance1)")
+                totalDistance1 = distance1
+            }
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: rsc1Notification), object: nil)
+            
+        } else if peripheral == podPeripheral2 {
+            speed2 = currentSpeed
+            cadence2 = currentCadence
+            if let stride2 = currentStrideLength {
+                strideLength2 = stride2
+            }
+            if let distance2 = totalDistance {
+                totalDistance2 = distance2
+            }
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: rsc2Notification), object: nil)
+        }
+
+    }
+    
+    func getRscFeatureData(_ peripheral: CBPeripheral, _ currentRscFeature: Data) {
+        
+        var distanceSupported: Bool = false
+        var walkRunStatusSupported: Bool = false
+        var calibrationSupported: Bool = false
+
+        // check if total distance supported
+        if (currentRscFeature[0] & 0b00000010 == 1) {
+            distanceSupported = true
+        }
+        if (currentRscFeature[0] & 0b00000100 == 1) {
+            walkRunStatusSupported = true
+        }
+        if (currentRscFeature[0] & 0b00001000 == 1) {
+            calibrationSupported = true
+        }
+        
+        // update appropriate instance variables
+        if peripheral == podPeripheral1 {
+            self.distanceSupportedPod1 = distanceSupported
+            self.walkRunStatusSupportedPod1 = walkRunStatusSupported
+            self.calibrationSupportedPod1 = calibrationSupported
+        }
+        
+        else if peripheral == podPeripheral2 {
+            self.distanceSupportedPod2 = distanceSupported
+            self.walkRunStatusSupportedPod2 = walkRunStatusSupported
+            self.calibrationSupportedPod2 = calibrationSupported
         }
     }
 }

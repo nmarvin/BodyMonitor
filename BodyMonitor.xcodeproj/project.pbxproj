@@ -16,6 +16,7 @@
 		ADA3FF271E061B2000F18301 /* BodyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF261E061B2000F18301 /* BodyMonitorTests.swift */; };
 		ADA3FF321E061B2000F18301 /* BodyMonitorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF311E061B2000F18301 /* BodyMonitorUITests.swift */; };
 		ADA3FF401E06259700F18301 /* MyCentralManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */; };
+		ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		ADA3FF311E061B2000F18301 /* BodyMonitorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMonitorUITests.swift; sourceTree = "<group>"; };
 		ADA3FF331E061B2000F18301 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyCentralManagerDelegate.swift; sourceTree = "<group>"; };
+		ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCXFileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				ADA3FF181E061B1F00F18301 /* Assets.xcassets */,
 				ADA3FF1A1E061B1F00F18301 /* LaunchScreen.storyboard */,
 				ADA3FF1D1E061B1F00F18301 /* Info.plist */,
+				ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */,
 			);
 			path = BodyMonitor;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				ADA3FF401E06259700F18301 /* MyCentralManagerDelegate.swift in Sources */,
 				ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */,
 				AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */,
+				ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */,
 				ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
