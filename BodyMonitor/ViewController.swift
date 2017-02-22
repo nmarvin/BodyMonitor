@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import CoreLocation
 
 // global variables based off BLE specifications
 // first: service UUIDS
@@ -45,12 +46,13 @@ var strideLength2: Double? = nil
 var totalDistance2: Double? = nil
 
 class ViewController: UIViewController {
-    // variables for keeping time
+    // instantiate timers
     var durationTimer = Timer()
     var recordingTimer = Timer()
     var startTime = TimeInterval()
     var pauseTime = TimeInterval()
     var totalPausedTime = TimeInterval()
+    // variables for keeping time
     var hours: Int = 0
     var minutes: Int = 0
     var seconds: Int = 0

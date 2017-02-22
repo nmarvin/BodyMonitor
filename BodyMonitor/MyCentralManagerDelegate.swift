@@ -51,7 +51,6 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         let id = String(describing: peripheral.identifier)
         print("Identifier: ", id)
         print("Name: ", peripheral.name)
-        //let currentServices = didDiscover.services
         tempPeripheral = peripheral
         tempPeripheral.delegate = myPeripheralDelegate
         //central.connect(tempPeripheral, options: nil)
@@ -68,8 +67,13 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
             }
         
             else if device.contains("Polar RUN") {
+                print("contains polar run")
                 if let permanentPeripheral = storePeripheral(tempPeripheral, isHeartSensor: false) {
+                    print("pod stored")
                     central.connect(permanentPeripheral, options: nil)
+                }
+                else{
+                    print("could not store")
                 }
             }
         }
@@ -114,10 +118,14 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
     
     // permanently store a peripheral
     func storePeripheral(_ temporary: CBPeripheral, isHeartSensor:Bool) -> CBPeripheral? {
-        if isHeartSensor {
+        if temporary == hrmPeripheral || temporary == podPeripheral1 || temporary == podPeripheral2 {
+            return nil
+        }
+        else if isHeartSensor {
             hrmPeripheral = temporary
             return hrmPeripheral
         }
+        
         else if podPeripheral1 == nil {
             podPeripheral1 = temporary
             return podPeripheral1

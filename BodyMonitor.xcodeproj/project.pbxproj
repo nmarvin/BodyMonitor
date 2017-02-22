@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD7AA5D01E54A12700498473 /* SetWorkoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AA5CF1E54A12700498473 /* SetWorkoutViewController.swift */; };
 		AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */; };
 		ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF111E061B1F00F18301 /* AppDelegate.swift */; };
 		ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF131E061B1F00F18301 /* ViewController.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AD7AA5CF1E54A12700498473 /* SetWorkoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SetWorkoutViewController.swift; path = ../SetWorkoutViewController.swift; sourceTree = "<group>"; };
 		AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPeripheralDelegate.swift; sourceTree = "<group>"; };
 		ADA3FF0E1E061B1F00F18301 /* BodyMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BodyMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADA3FF111E061B1F00F18301 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		ADA3FF101E061B1F00F18301 /* BodyMonitor */ = {
 			isa = PBXGroup;
 			children = (
+				AD7AA5CF1E54A12700498473 /* SetWorkoutViewController.swift */,
 				ADA3FF111E061B1F00F18301 /* AppDelegate.swift */,
 				ADA3FF131E061B1F00F18301 /* ViewController.swift */,
 				ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */,
@@ -274,6 +277,7 @@
 				AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */,
 				ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */,
 				ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */,
+				AD7AA5D01E54A12700498473 /* SetWorkoutViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
