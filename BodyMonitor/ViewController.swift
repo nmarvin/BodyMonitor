@@ -33,6 +33,8 @@ let hrmNotification = "Heart Rate Updated"
 let rsc1Notification = "RSC Updated, Pod 1"
 let rsc2Notification = "RSC Updated, Pod 2"
 
+// variables for RPE querying
+
 // display variables for sensor data
 // cadence: unsigned byte (max 254); heart rate: positive byte; speed: double; distance: double
 var hrm: UInt8? = nil
