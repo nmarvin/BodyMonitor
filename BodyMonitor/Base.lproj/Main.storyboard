@@ -200,6 +200,7 @@
                     <connections>
                         <outlet property="cadence1Label" destination="qKD-tV-93x" id="lfQ-T2-RHS"/>
                         <outlet property="cadence2Label" destination="Sih-Rm-WBh" id="LQ6-3M-M3I"/>
+                        <outlet property="customizeWorkoutButton" destination="DCM-nS-lBY" id="d2g-vh-mvr"/>
                         <outlet property="distance1Label" destination="fhq-bC-Yc5" id="B56-yI-ofy"/>
                         <outlet property="distance2Label" destination="W5L-I9-H9e" id="n9B-np-WvK"/>
                         <outlet property="heartRateLabel" destination="h78-me-yyK" id="vCo-q8-qsY"/>
@@ -208,12 +209,57 @@
                         <outlet property="mostSignificantTimeDigit" destination="3Dd-TZ-cen" id="iOy-KS-tSx"/>
                         <outlet property="speed1Label" destination="ZPh-lR-Hpj" id="Bxv-Y4-FlK"/>
                         <outlet property="speed2Label" destination="M0e-Sr-Jjg" id="71i-Qw-P4w"/>
+                        <outlet property="stopButtonLabel" destination="0c7-xN-cbK" id="A5m-i4-kIX"/>
                         <outlet property="timePunctuation" destination="lFQ-Rb-dJt" id="7uf-DI-QP4"/>
+                        <segue destination="cw7-z8-0dd" kind="presentation" identifier="rpeSegue" id="DCf-ja-vnH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="450" y="-13"/>
+        </scene>
+        <!--Rpe View Controller-->
+        <scene sceneID="5eF-kj-NOr">
+            <objects>
+                <viewController id="cw7-z8-0dd" customClass="RpeViewController" customModule="BodyMonitor" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="p7T-xE-KkH"/>
+                        <viewControllerLayoutGuide type="bottom" id="5au-uZ-3k6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Duj-KB-CWD">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ys5-s3-JmH">
+                                <rect key="frame" x="0.0" y="176" width="320" height="216"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eAb-qk-nKL">
+                                <rect key="frame" x="117" y="501" width="87" height="47"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                <state key="normal" title="Done"/>
+                                <connections>
+                                    <action selector="close" destination="cw7-z8-0dd" eventType="touchUpInside" id="Scv-fg-QL3"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="RPE:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="shC-iW-CiY">
+                                <rect key="frame" x="130" y="133" width="60" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="29"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="rpePickerView" destination="Ys5-s3-JmH" id="HeC-hD-Kcu"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wdt-ZV-agK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="450" y="715.14084507042253"/>
         </scene>
         <!--Set Workout View Controller-->
         <scene sceneID="UQb-qK-vB9">

@@ -46,6 +46,7 @@ var speed2: Double? = nil
 var cadence2: UInt8? = nil
 var strideLength2: Double? = nil
 var totalDistance2: Double? = nil
+var currentRpe: Int? = nil
 
 class ViewController: UIViewController {
     // instantiate timers
@@ -65,6 +66,8 @@ class ViewController: UIViewController {
     var heartRate: [UInt8?] = []
     var speed: [Double?] = []
     var cadence: [UInt8?] = []
+    var indices: [Int] = []
+    var rpe: [Int] = []
     
     @IBOutlet weak var heartRateLabel: UILabel!
     @IBOutlet weak var speed1Label: UILabel!
@@ -77,10 +80,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var middleSignificantTimeDigit: UILabel!
     @IBOutlet weak var timePunctuation: UILabel!
     @IBOutlet weak var leastSignificantTimeDigit: UILabel!
-   
+    @IBOutlet weak var stopButtonLabel: UIButton!
+    @IBOutlet weak var customizeWorkoutButton: UIButton!
+    
     @IBAction func startTime(_ sender: Any) {
+        
         if !self.timeIsRunning {
             if !self.timeIsPaused {
+                customizeWorkoutButton.isEnabled = false
                 
                 startTime = Date.timeIntervalSinceReferenceDate
                 // start with no paused time
@@ -88,6 +95,7 @@ class ViewController: UIViewController {
                 
             }
             else {
+                stopButtonLabel.setTitle("Stop", for: .normal)
                 totalPausedTime += (Date.timeIntervalSinceReferenceDate - pauseTime)
                 self.timeIsPaused = false
             }
@@ -105,10 +113,16 @@ class ViewController: UIViewController {
             pauseTime = Date.timeIntervalSinceReferenceDate
             timeIsRunning = false
             timeIsPaused = true
-            print("Length of date array: \(dateTime.count)")
-            print("Length of hrm array: \(heartRate.count)")
-            print("Length of cadence array: \(cadence.count)")
-            print("Length of speed array: \(speed.count)")
+            stopButtonLabel.setTitle("End", for: .normal)
+            //print("Length of date array: \(dateTime.count)")
+            //print("Length of hrm array: \(heartRate.count)")
+            //print("Length of cadence array: \(cadence.count)")
+            //print("Length of speed array: \(speed.count)")
+        }
+        else {
+            // query for RPE
+            getRpe()
+            customizeWorkoutButton.isEnabled = true
         }
     }
 
@@ -170,7 +184,7 @@ class ViewController: UIViewController {
     
     // calculate the elapsed time
     func updateTime() {
-        var currentTime = Date.timeIntervalSinceReferenceDate
+        let currentTime = Date.timeIntervalSinceReferenceDate
         var elapsedTime: TimeInterval = (currentTime - startTime) - totalPausedTime
         
         self.hours = Int(elapsedTime / (60 * 60)) // hours conversion = seconds * (1 minute / 60 seconds) * (1 hour / 60 minutes)
@@ -237,9 +251,26 @@ class ViewController: UIViewController {
         
     }
     
+    func recordRpe() {
+        if let unwrappedRpe = currentRpe {
+        dateTime.append(Date.timeIntervalSinceReferenceDate)
+        rpe.append(unwrappedRpe)
+        indices.append(dateTime.count)
+        heartRate.append(hrm)
+        speed.append(speed1)
+        cadence.append(cadence1)
+        }
+    }
+    
     // write data to a file
     func exportData() {
         // consider storing in Library/Application support/ (...or maybe consider it user data and store in Documents/ ?)
-        
+        print("Data export")
+    }
+    
+    // query for RPE
+    func getRpe() {
+        self.performSegue(withIdentifier: "rpeSegue", sender: nil)
+        // wait for child view to disappear, then export data
     }
 }

@@ -24,6 +24,7 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     let BY_END = "At Workout Conclusion"
     
     var rpeQueryOptions: [String] = []
+    var queryType = "At Workout Conclusion"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,9 +47,15 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
 
     }
     
-    // when the user presses "Go!", return to the main screen
+    // when the user presses "Go!", save RPE query method and return to the main screen
     @IBAction func close(_ sender: Any) {
         //TODO: store the preferred RPE query method; set a notification thingy for querying and recording
+        if queryType == BY_TIME {
+            
+        }
+        else if queryType == BY_HR {
+            
+        }
         dismiss(animated: true, completion: nil)
     }
     
@@ -71,7 +78,7 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let queryType = rpeQueryOptions[row]
+        queryType = rpeQueryOptions[row]
         rpeQueryType.text = queryType
         if(queryType == BY_HR) {
             hrChildContainer.isHidden = false
@@ -115,7 +122,7 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     // http://stackoverflow.com/questions/26070242/move-view-with-keyboard-using-swift
     func keyboardWillHide(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            if self.view.frame.origin.y != 0{
+            if self.view.frame.origin.y != 0 {
                 self.view.frame.origin.y += keyboardSize.height
             }
         }
