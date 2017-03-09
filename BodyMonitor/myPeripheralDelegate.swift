@@ -10,12 +10,9 @@ import CoreBluetooth
 
 class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
     
-    var distanceSupportedPod1: Bool = false
-    var distanceSupportedPod2: Bool = false
-    var walkRunStatusSupportedPod1: Bool = false
-    var walkRunStatusSupportedPod2: Bool = false
-    var calibrationSupportedPod1: Bool = false
-    var calibrationSupportedPod2: Bool = false
+    var distanceSupported: Bool = false
+    var walkRunStatusSupported: Bool = false
+    var calibrationSupported: Bool = false
     
     override init() {
         super.init()
@@ -58,7 +55,7 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         if let theError = error {
             print("Error: \(theError)")
         }
-        else if peripheral == hrmPeripheral && characteristic.uuid == POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID {
+        else if peripheral === hrmPeripheral && characteristic.uuid == POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID {
             if let currentHeartRate = characteristic.value {
                 getHeartRateData(currentHeartRate)
             }
@@ -104,90 +101,64 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         currentRsc.copyBytes(to: &buffer, count: buffer.count)
         
         // get speed: UInt16
-        var currentSpeed = Double((Int(buffer[2]) << 8) + Int(buffer[1]))
+        var myCurrentSpeed = Double((Int(buffer[2]) << 8) + Int(buffer[1]))
         
         // get cadence: UInt8
-        var currentCadence = buffer[3]
+        var myCurrentCadence = buffer[3]
         
-        var currentStrideLength: Double? = nil
-        var totalDistance: Double? = nil
+        var myCurrentStrideLength: Double? = nil
+        var myTotalDistance: Double? = nil
         
         // get instantaneous stride length and total distance
         if (buffer[0] & 0b00000001 == 1) {
             if buffer.count >= 4 {
-                var strideLength = Int(buffer[4]) << 8 + Int(buffer[3])
-                currentStrideLength = Double(strideLength)
+                var myStrideLength = Int(buffer[4]) << 8 + Int(buffer[3])
+                myCurrentStrideLength = Double(myStrideLength)
             }
             if (buffer[0] & 0b00000010 == 1) {
                 if buffer.count >= 9 {
                     let theDistance = Int(buffer[8]) << 24 + (Int(buffer[7]) << 16) + (Int(buffer[6]) << 8) + Int(buffer[5])
-                    totalDistance = Double(theDistance)
+                    myTotalDistance = Double(theDistance)
                 }
             }
         }
         else if (buffer[0] & 0b00000010 == 1) {
             if buffer.count >= 7 {
                 let theDistance = Int(buffer[6]) << 24 + (Int(buffer[5]) << 16) + (Int(buffer[4]) << 8) + Int(buffer[3])
-                totalDistance = Double(theDistance)
+                myTotalDistance = Double(theDistance)
             }
         }
         
-        if peripheral == podPeripheral1 {
-            speed1 = currentSpeed
-            cadence1 = currentCadence
-            if let stride1 = currentStrideLength {
-                strideLength1 = stride1
+        if peripheral == podPeripheral {
+            currentSpeed = myCurrentSpeed
+            currentCadence = myCurrentCadence
+            if let stride1 = myCurrentStrideLength {
+                currentStrideLength = stride1
             }
-            if let distance1 = totalDistance {
+            if let distance1 = myTotalDistance {
                 print("Distance: \(distance1)")
-                totalDistance1 = distance1
+                currentTotalDistance = distance1
             }
             
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: rsc1Notification), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: rscNotification), object: nil)
             
-        } else if peripheral == podPeripheral2 {
-            speed2 = currentSpeed
-            cadence2 = currentCadence
-            if let stride2 = currentStrideLength {
-                strideLength2 = stride2
-            }
-            if let distance2 = totalDistance {
-                totalDistance2 = distance2
-            }
-            
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: rsc2Notification), object: nil)
         }
-
     }
     
     func getRscFeatureData(_ peripheral: CBPeripheral, _ currentRscFeature: Data) {
         
-        var distanceSupported: Bool = false
-        var walkRunStatusSupported: Bool = false
-        var calibrationSupported: Bool = false
+        if peripheral == podPeripheral {
 
-        // check if total distance supported
-        if (currentRscFeature[0] & 0b00000010 == 1) {
-            distanceSupported = true
-        }
-        if (currentRscFeature[0] & 0b00000100 == 1) {
-            walkRunStatusSupported = true
-        }
-        if (currentRscFeature[0] & 0b00001000 == 1) {
-            calibrationSupported = true
-        }
-        
-        // update appropriate instance variables
-        if peripheral == podPeripheral1 {
-            self.distanceSupportedPod1 = distanceSupported
-            self.walkRunStatusSupportedPod1 = walkRunStatusSupported
-            self.calibrationSupportedPod1 = calibrationSupported
-        }
-        
-        else if peripheral == podPeripheral2 {
-            self.distanceSupportedPod2 = distanceSupported
-            self.walkRunStatusSupportedPod2 = walkRunStatusSupported
-            self.calibrationSupportedPod2 = calibrationSupported
+            // check if total distance supported
+            if (currentRscFeature[0] & 0b00000010 == 1) {
+                distanceSupported = true
+            }
+            if (currentRscFeature[0] & 0b00000100 == 1) {
+                walkRunStatusSupported = true
+            }
+            if (currentRscFeature[0] & 0b00001000 == 1) {
+                calibrationSupported = true
+            }
         }
     }
 }

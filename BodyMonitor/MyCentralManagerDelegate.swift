@@ -11,8 +11,7 @@ import CoreBluetooth
 // the peripherals we expect to connect to
 var tempPeripheral: CBPeripheral!
 var hrmPeripheral:CBPeripheral!
-var podPeripheral1:CBPeripheral!
-var podPeripheral2:CBPeripheral!
+var podPeripheral:CBPeripheral!
 
 // the peripheral delegate
 let myPeripheralDelegate = MyPeripheralDelegate()
@@ -61,14 +60,13 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         print("Device name : \(device)")
             // identify heart rate monitor
             if device.contains("Polar H7") {
-                if let permanentPeripheral = storePeripheral(tempPeripheral, isHeartSensor: true) {
+                if let permanentPeripheral = storePeripheral(peripheral, isHeartSensor: true) {
                     central.connect(permanentPeripheral, options: nil)
                 }
             }
         
             else if device.contains("Polar RUN") {
-                print("contains polar run")
-                if let permanentPeripheral = storePeripheral(tempPeripheral, isHeartSensor: false) {
+                if let permanentPeripheral = storePeripheral(peripheral, isHeartSensor: false) {
                     print("pod stored")
                     central.connect(permanentPeripheral, options: nil)
                 }
@@ -77,11 +75,11 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
                 }
             }
         }
-        if (hrmPeripheral == nil || podPeripheral1 == nil || podPeripheral2 == nil) {
+        if (hrmPeripheral == nil || podPeripheral == nil) {
             startScan(central)
         }
         else {
-            print("All three devices connected")
+            print("Both devices connected")
         }
     }
     
@@ -111,28 +109,24 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
     
     // start scanning for peripherals
     func startScan(_ central: CBCentralManager) {
-        if (hrmPeripheral == nil || podPeripheral1 == nil || podPeripheral2 == nil) {
+        if (hrmPeripheral == nil || podPeripheral == nil) {
             central.scanForPeripherals(withServices: serviceUUIDS, options: nil)
         }
     }
     
     // permanently store a peripheral
     func storePeripheral(_ temporary: CBPeripheral, isHeartSensor:Bool) -> CBPeripheral? {
-        if temporary == hrmPeripheral || temporary == podPeripheral1 || temporary == podPeripheral2 {
+        if temporary === hrmPeripheral || temporary === podPeripheral {
             return nil
         }
-        else if isHeartSensor {
+        if isHeartSensor {
             hrmPeripheral = temporary
             return hrmPeripheral
         }
         
-        else if podPeripheral1 == nil {
-            podPeripheral1 = temporary
-            return podPeripheral1
-        }
-        else if podPeripheral2 == nil {
-            podPeripheral2 = temporary
-            return podPeripheral2
+        else if podPeripheral == nil {
+            podPeripheral = temporary
+            return podPeripheral
         }
         else {
             return nil

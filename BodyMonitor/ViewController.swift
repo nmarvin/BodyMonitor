@@ -30,23 +30,18 @@ let myManager = CBCentralManager(delegate: myManagerDelegate, queue: nil)
 
 // notification messages
 let hrmNotification = "Heart Rate Updated"
-let rsc1Notification = "RSC Updated, Pod 1"
-let rsc2Notification = "RSC Updated, Pod 2"
-
-// variables for RPE querying
+let rscNotification = "RSC Updated"
+let rpeNotification = "RPE Updated"
 
 // display variables for sensor data
 // cadence: unsigned byte (max 254); heart rate: positive byte; speed: double; distance: double
 var hrm: UInt8? = nil
-var speed1: Double? = nil
-var cadence1: UInt8? = nil
-var strideLength1: Double? = nil
-var totalDistance1: Double? = nil
-var speed2: Double? = nil
-var cadence2: UInt8? = nil
-var strideLength2: Double? = nil
-var totalDistance2: Double? = nil
+var currentSpeed: Double? = nil
+var currentCadence: UInt8? = nil
+var currentStrideLength: Double? = nil
+var currentTotalDistance: Double? = nil
 var currentRpe: Int? = nil
+var endWorkout: Bool = false
 
 class ViewController: UIViewController {
     // instantiate timers
@@ -70,23 +65,23 @@ class ViewController: UIViewController {
     var rpe: [Int] = []
     
     @IBOutlet weak var heartRateLabel: UILabel!
-    @IBOutlet weak var speed1Label: UILabel!
-    @IBOutlet weak var cadence1Label: UILabel!
-    @IBOutlet weak var distance1Label: UILabel!
-    @IBOutlet weak var speed2Label: UILabel!
-    @IBOutlet weak var cadence2Label: UILabel!
-    @IBOutlet weak var distance2Label: UILabel!
+    @IBOutlet weak var speedLabel: UILabel!
+    @IBOutlet weak var cadenceLabel: UILabel!
+    @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var mostSignificantTimeDigit: UILabel!
     @IBOutlet weak var middleSignificantTimeDigit: UILabel!
     @IBOutlet weak var timePunctuation: UILabel!
     @IBOutlet weak var leastSignificantTimeDigit: UILabel!
     @IBOutlet weak var stopButtonLabel: UIButton!
     @IBOutlet weak var customizeWorkoutButton: UIButton!
+    @IBOutlet weak var stopButton: UIButton!
+    @IBOutlet weak var endButton: UIButton!
     
     @IBAction func startTime(_ sender: Any) {
         
         if !self.timeIsRunning {
             if !self.timeIsPaused {
+                stopButton.isEnabled = true
                 customizeWorkoutButton.isEnabled = false
                 
                 startTime = Date.timeIntervalSinceReferenceDate
@@ -95,6 +90,7 @@ class ViewController: UIViewController {
                 
             }
             else {
+                stopButton.isEnabled = true
                 stopButtonLabel.setTitle("Stop", for: .normal)
                 totalPausedTime += (Date.timeIntervalSinceReferenceDate - pauseTime)
                 self.timeIsPaused = false
@@ -113,7 +109,11 @@ class ViewController: UIViewController {
             pauseTime = Date.timeIntervalSinceReferenceDate
             timeIsRunning = false
             timeIsPaused = true
-            stopButtonLabel.setTitle("End", for: .normal)
+            stopButton.isHidden = true
+            stopButton.isEnabled = false
+            endButton.isHidden = false
+            endButton.isEnabled = true
+            //stopButtonLabel.setTitle("End", for: .normal)
             //print("Length of date array: \(dateTime.count)")
             //print("Length of hrm array: \(heartRate.count)")
             //print("Length of cadence array: \(cadence.count)")
@@ -125,16 +125,28 @@ class ViewController: UIViewController {
             customizeWorkoutButton.isEnabled = true
         }
     }
+    
+    @IBAction func endTime(_ sender: Any) {
+        endButton.isEnabled = false
+        endButton.isHidden = true
+        stopButton.isHidden = false
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        stopButton.isEnabled = false
+        endButton.isEnabled = false
+        endButton.isHidden = true
+        
         // listen for notifications from three sensors
         NotificationCenter.default.addObserver(self, selector: #selector(displayHeartRate), name: NSNotification.Name(rawValue: hrmNotification), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC1), name: NSNotification.Name(rawValue: rsc1Notification), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC2), name: NSNotification.Name(rawValue: rsc2Notification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayRSC), name: NSNotification.Name(rawValue: rscNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(recordRpe), name: NSNotification.Name(rawValue: rpeNotification), object: nil)
         
         // begin scanning for the necessary devices
         if myManager.state == .poweredOn {
+            print("powered on in VC")
             myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
         }
     }
@@ -156,29 +168,16 @@ class ViewController: UIViewController {
         }
     }
     
-    // display data from the first foot pod
-    func displayRSC1() {
-        if let currentSpeed1 = speed1 {
-            speed1Label.text = String(currentSpeed1)
+    // display data from the foot pod
+    func displayRSC() {
+        if let theCurrentSpeed = currentSpeed {
+            speedLabel.text = String(theCurrentSpeed)
         }
-        if let currentCadence1 = cadence1 {
-            cadence1Label.text = String(currentCadence1)
+        if let theCurrentCadence = currentCadence {
+            cadenceLabel.text = String(theCurrentCadence)
         }
-        if let currentDistance1 = totalDistance1 {
-            distance1Label.text = String(currentDistance1)
-        }
-    }
-    
-    // display data from the second foot pod
-    func displayRSC2() {
-        if let currentSpeed2 = speed2 {
-            speed2Label.text = String(currentSpeed2)
-        }
-        if let currentCadence2 = cadence2 {
-            cadence2Label.text = String(currentCadence2)
-        }
-        if let currentDistance2 = totalDistance2 {
-            distance2Label.text = String(currentDistance2)
+        if let theCurrentTotalDistance = currentTotalDistance {
+            distanceLabel.text = String(theCurrentTotalDistance)
         }
     }
     
@@ -246,9 +245,8 @@ class ViewController: UIViewController {
     func recordData() {
         dateTime.append(Date.timeIntervalSinceReferenceDate)
         heartRate.append(hrm)
-        speed.append(speed1)
-        cadence.append(cadence1)
-        
+        speed.append(currentSpeed)
+        cadence.append(currentCadence)
     }
     
     func recordRpe() {
@@ -257,8 +255,8 @@ class ViewController: UIViewController {
         rpe.append(unwrappedRpe)
         indices.append(dateTime.count)
         heartRate.append(hrm)
-        speed.append(speed1)
-        cadence.append(cadence1)
+        speed.append(currentSpeed)
+        cadence.append(currentCadence)
         }
     }
     
@@ -266,11 +264,18 @@ class ViewController: UIViewController {
     func exportData() {
         // consider storing in Library/Application support/ (...or maybe consider it user data and store in Documents/ ?)
         print("Data export")
+        
+        // build a long, long string?
     }
     
     // query for RPE
     func getRpe() {
-        self.performSegue(withIdentifier: "rpeSegue", sender: nil)
+        //endWorkout = true
+        // show the new screen over the current one; time will keep running, etc.
+        self.performSegue(withIdentifier: "rpeSegue", sender: self)
         // wait for child view to disappear, then export data
+        /*while (currentRpe == nil) {
+            continue
+        }*/
     }
 }

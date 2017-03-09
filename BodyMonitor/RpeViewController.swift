@@ -40,5 +40,5 @@ class RpeViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
-    }
+    } 
 }
