@@ -11,6 +11,7 @@
 		AD72316F1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD72316E1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift */; };
 		AD7231711E5F34F500A37BD5 /* AllowedCharsTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7231701E5F34F500A37BD5 /* AllowedCharsTextField.swift */; };
 		AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */; };
+		AD83F2A81E7D8CF100BFA723 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F2A71E7D8CF100BFA723 /* LoginViewController.swift */; };
 		AD9527E01E6088B700FE6818 /* RpeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9527DF1E6088B700FE6818 /* RpeViewController.swift */; };
 		ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF111E061B1F00F18301 /* AppDelegate.swift */; };
 		ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF131E061B1F00F18301 /* ViewController.swift */; };
@@ -20,6 +21,7 @@
 		ADA3FF271E061B2000F18301 /* BodyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF261E061B2000F18301 /* BodyMonitorTests.swift */; };
 		ADA3FF321E061B2000F18301 /* BodyMonitorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF311E061B2000F18301 /* BodyMonitorUITests.swift */; };
 		ADA3FF401E06259700F18301 /* MyCentralManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */; };
+		ADA5DC871E720A7E0072CF12 /* RunningWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = ADA5DC861E720A7E0072CF12 /* RunningWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,13 +40,45 @@
 			remoteGlobalIDString = ADA3FF0D1E061B1F00F18301;
 			remoteInfo = BodyMonitor;
 		};
+		ADA5DC881E720A7E0072CF12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ADA3FF061E061B1F00F18301 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ADA5DC851E720A7E0072CF12;
+			remoteInfo = "RunningWatch Extension";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		ADA5DC9E1E720A7E0072CF12 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				ADA5DC871E720A7E0072CF12 /* RunningWatch Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADA5DCA01E720A7E0072CF12 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AD72316C1E5DE31D00A37BD5 /* SetWorkoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetWorkoutViewController.swift; sourceTree = "<group>"; };
 		AD72316E1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldMaxLengths.swift; sourceTree = "<group>"; };
 		AD7231701E5F34F500A37BD5 /* AllowedCharsTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllowedCharsTextField.swift; sourceTree = "<group>"; };
 		AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPeripheralDelegate.swift; sourceTree = "<group>"; };
+		AD83F2A71E7D8CF100BFA723 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		AD9527DF1E6088B700FE6818 /* RpeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RpeViewController.swift; sourceTree = "<group>"; };
 		ADA3FF0E1E061B1F00F18301 /* BodyMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BodyMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADA3FF111E061B1F00F18301 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -60,6 +94,8 @@
 		ADA3FF311E061B2000F18301 /* BodyMonitorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyMonitorUITests.swift; sourceTree = "<group>"; };
 		ADA3FF331E061B2000F18301 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyCentralManagerDelegate.swift; sourceTree = "<group>"; };
+		ADA5DC7A1E720A7E0072CF12 /* RunningWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADA5DC861E720A7E0072CF12 /* RunningWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "RunningWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCXFileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,6 +121,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADA5DC831E720A7E0072CF12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -104,6 +147,8 @@
 				ADA3FF0E1E061B1F00F18301 /* BodyMonitor.app */,
 				ADA3FF221E061B2000F18301 /* BodyMonitorTests.xctest */,
 				ADA3FF2D1E061B2000F18301 /* BodyMonitorUITests.xctest */,
+				ADA5DC7A1E720A7E0072CF12 /* RunningWatch.app */,
+				ADA5DC861E720A7E0072CF12 /* RunningWatch Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -121,6 +166,7 @@
 				AD7231701E5F34F500A37BD5 /* AllowedCharsTextField.swift */,
 				AD72316E1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift */,
 				ADA3FF181E061B1F00F18301 /* Assets.xcassets */,
+				AD83F2A71E7D8CF100BFA723 /* LoginViewController.swift */,
 				ADA3FF1A1E061B1F00F18301 /* LaunchScreen.storyboard */,
 				ADA3FF1D1E061B1F00F18301 /* Info.plist */,
 				ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */,
@@ -156,6 +202,7 @@
 				ADA3FF0A1E061B1F00F18301 /* Sources */,
 				ADA3FF0B1E061B1F00F18301 /* Frameworks */,
 				ADA3FF0C1E061B1F00F18301 /* Resources */,
+				ADA5DCA01E720A7E0072CF12 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
@@ -202,6 +249,40 @@
 			productReference = ADA3FF2D1E061B2000F18301 /* BodyMonitorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		ADA5DC791E720A7E0072CF12 /* RunningWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADA5DC9F1E720A7E0072CF12 /* Build configuration list for PBXNativeTarget "RunningWatch" */;
+			buildPhases = (
+				ADA5DC781E720A7E0072CF12 /* Resources */,
+				ADA5DC9E1E720A7E0072CF12 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ADA5DC891E720A7E0072CF12 /* PBXTargetDependency */,
+			);
+			name = RunningWatch;
+			productName = RunningWatch;
+			productReference = ADA5DC7A1E720A7E0072CF12 /* RunningWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		ADA5DC851E720A7E0072CF12 /* RunningWatch Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ADA5DC9D1E720A7E0072CF12 /* Build configuration list for PBXNativeTarget "RunningWatch Extension" */;
+			buildPhases = (
+				ADA5DC821E720A7E0072CF12 /* Sources */,
+				ADA5DC831E720A7E0072CF12 /* Frameworks */,
+				ADA5DC841E720A7E0072CF12 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "RunningWatch Extension";
+			productName = "RunningWatch Extension";
+			productReference = ADA5DC861E720A7E0072CF12 /* RunningWatch Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -227,6 +308,15 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = ADA3FF0D1E061B1F00F18301;
 					};
+					ADA5DC791E720A7E0072CF12 = {
+						CreatedOnToolsVersion = 8.2;
+						DevelopmentTeam = G3NGHXTVNF;
+						ProvisioningStyle = Automatic;
+					};
+					ADA5DC851E720A7E0072CF12 = {
+						CreatedOnToolsVersion = 8.2;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = ADA3FF091E061B1F00F18301 /* Build configuration list for PBXProject "BodyMonitor" */;
@@ -245,6 +335,8 @@
 				ADA3FF0D1E061B1F00F18301 /* BodyMonitor */,
 				ADA3FF211E061B2000F18301 /* BodyMonitorTests */,
 				ADA3FF2C1E061B2000F18301 /* BodyMonitorUITests */,
+				ADA5DC791E720A7E0072CF12 /* RunningWatch */,
+				ADA5DC851E720A7E0072CF12 /* RunningWatch Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -274,6 +366,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADA5DC781E720A7E0072CF12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADA5DC841E720A7E0072CF12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -285,6 +391,7 @@
 				ADA3FF401E06259700F18301 /* MyCentralManagerDelegate.swift in Sources */,
 				AD9527E01E6088B700FE6818 /* RpeViewController.swift in Sources */,
 				ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */,
+				AD83F2A81E7D8CF100BFA723 /* LoginViewController.swift in Sources */,
 				AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */,
 				ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */,
 				ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */,
@@ -309,6 +416,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ADA5DC821E720A7E0072CF12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -321,6 +435,11 @@
 			isa = PBXTargetDependency;
 			target = ADA3FF0D1E061B1F00F18301 /* BodyMonitor */;
 			targetProxy = ADA3FF2E1E061B2000F18301 /* PBXContainerItemProxy */;
+		};
+		ADA5DC891E720A7E0072CF12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ADA5DC851E720A7E0072CF12 /* RunningWatch Extension */;
+			targetProxy = ADA5DC881E720A7E0072CF12 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -521,6 +640,72 @@
 			};
 			name = Release;
 		};
+		ADA5DC991E720A7E0072CF12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G3NGHXTVNF;
+				IBSC_MODULE = RunningWatch_Extension;
+				INFOPLIST_FILE = RunningWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = sample.BodyMonitor.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.1;
+			};
+			name = Debug;
+		};
+		ADA5DC9A1E720A7E0072CF12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = G3NGHXTVNF;
+				IBSC_MODULE = RunningWatch_Extension;
+				INFOPLIST_FILE = RunningWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = sample.BodyMonitor.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.1;
+			};
+			name = Release;
+		};
+		ADA5DC9B1E720A7E0072CF12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				INFOPLIST_FILE = "RunningWatch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = sample.BodyMonitor.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.1;
+			};
+			name = Debug;
+		};
+		ADA5DC9C1E720A7E0072CF12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				INFOPLIST_FILE = "RunningWatch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = sample.BodyMonitor.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -556,6 +741,24 @@
 			buildConfigurations = (
 				ADA3FF3D1E061B2000F18301 /* Debug */,
 				ADA3FF3E1E061B2000F18301 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADA5DC9D1E720A7E0072CF12 /* Build configuration list for PBXNativeTarget "RunningWatch Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADA5DC9B1E720A7E0072CF12 /* Debug */,
+				ADA5DC9C1E720A7E0072CF12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ADA5DC9F1E720A7E0072CF12 /* Build configuration list for PBXNativeTarget "RunningWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADA5DC991E720A7E0072CF12 /* Debug */,
+				ADA5DC9A1E720A7E0072CF12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

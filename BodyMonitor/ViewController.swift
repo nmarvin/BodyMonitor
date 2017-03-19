@@ -9,6 +9,7 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
+import MessageUI
 
 // global variables based off BLE specifications
 // first: service UUIDS
@@ -42,6 +43,7 @@ var currentStrideLength: Double? = nil
 var currentTotalDistance: Double? = nil
 var currentRpe: Int? = nil
 var endWorkout: Bool = false
+var userName: String = "user"
 
 class ViewController: UIViewController {
     // instantiate timers
@@ -63,6 +65,9 @@ class ViewController: UIViewController {
     var cadence: [UInt8?] = []
     var indices: [Int] = []
     var rpe: [Int] = []
+    
+    // should the view present the login screen?
+    var showLogin: Bool = true
     
     @IBOutlet weak var heartRateLabel: UILabel!
     @IBOutlet weak var speedLabel: UILabel!
@@ -135,6 +140,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         stopButton.isEnabled = false
         endButton.isEnabled = false
         endButton.isHidden = true
@@ -154,7 +160,11 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-    
+        if(showLogin) {
+            //immediately show the login screen
+            self.performSegue(withIdentifier: "loginSegue", sender: self)
+            showLogin = false
+        }
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -259,13 +269,52 @@ class ViewController: UIViewController {
         cadence.append(currentCadence)
         }
     }
-    
+
     // write data to a file
     func exportData() {
-        // consider storing in Library/Application support/ (...or maybe consider it user data and store in Documents/ ?)
+        // since we want the user to access her/his file, store in Documents/
         print("Data export")
         
-        // build a long, long string?
+        // build a long, long string
+        let myFileContents = "test file"
+        
+        // code for directory creation modivied from http://stackoverflow.com/questions/1762836/create-a-folder-inside-documents-folder-in-ios-apps
+        // get the path to "Documents", where user data should be stored
+        let documentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        // create the custom folder path
+        if let userDirectoryPath = documentDirectoryPath?.appending("/" + userName) {
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: userDirectoryPath) {
+                do {
+                    try fileManager.createDirectory(atPath: userDirectoryPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("Error creating user folder in documents dir: \(error)")
+                }
+                
+                // give the current file a timestamp
+                let file = CACurrentMediaTime()
+                // name the file with its extension
+                var fileName = String(file) + ".tcx"
+                
+                //write the file
+                do{
+                 try myFileContents.write(toFile: userDirectoryPath.appending(fileName), atomically: true, encoding: String.Encoding.utf8 )
+                 
+                 // alert code in try and catch statements modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
+                 let alertController = UIAlertController(title: "BodyMonitor", message: "Workout Saved!", preferredStyle: .alert)
+                 let actionItem = UIAlertAction(title: "Ok", style: .default)
+                 alertController.addAction(actionItem)
+                 present(alertController, animated: true, completion: nil)
+                 } catch{
+                 let alertController = UIAlertController(title: "BodyMonitor", message: "Save Failed", preferredStyle: .alert)
+                 let actionItem = UIAlertAction(title: "Ok", style: .default)
+                 alertController.addAction(actionItem)
+                 present(alertController, animated: true, completion: nil)
+                 }
+            }
+        }
     }
     
     // query for RPE
