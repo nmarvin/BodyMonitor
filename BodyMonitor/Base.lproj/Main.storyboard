@@ -185,7 +185,6 @@
                                 </state>
                                 <connections>
                                     <action selector="endTime:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kFY-7y-Wyp"/>
-                                    <segue destination="cw7-z8-0dd" kind="presentation" id="A6x-mY-8uM"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Heart Rate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kau-rx-gpk">
@@ -232,6 +231,7 @@
                         <outlet property="stopButtonLabel" destination="0c7-xN-cbK" id="A5m-i4-kIX"/>
                         <outlet property="timePunctuation" destination="lFQ-Rb-dJt" id="7uf-DI-QP4"/>
                         <segue destination="keY-uN-MEK" kind="presentation" identifier="loginSegue" id="pQY-ZA-Fqx"/>
+                        <segue destination="cw7-z8-0dd" kind="presentation" identifier="rpeSegue" id="NPL-F1-rsa"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -279,7 +279,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wdt-ZV-agK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="450" y="715.14084507042253"/>
+            <point key="canvasLocation" x="450" y="791"/>
         </scene>
         <!--Set Workout View Controller-->
         <scene sceneID="UQb-qK-vB9">

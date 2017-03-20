@@ -35,7 +35,7 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
         intervalChildContainer.isHidden = true
         //Keyboard dismissal (next three lines of code) modified from Esquarrouth on StackOverflow
         // http://stackoverflow.com/questions/24126678/close-ios-keyboard-by-touching-anywhere-using-swift/35560948
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SetWorkoutViewController.dismissKeyboard))
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
@@ -115,7 +115,6 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
                 self.view.frame.origin.y -= keyboardSize.height
             }
         }
-        
     }
     
     // keyboardWillHide modified from Boris on StackOverflow

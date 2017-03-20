@@ -21,8 +21,9 @@ class RpeViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
 
     @IBAction func close() {
         if(currentRow >= 0) {
-            // send rpe: currentRow + 1
             dismiss(animated: true, completion: nil)
+            // send rpe: currentRow + 1
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: rpeNotification), object: nil)
         }
     }
     

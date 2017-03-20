@@ -12,13 +12,13 @@ import CoreLocation
 import MessageUI
 
 // global variables based off BLE specifications
-// first: service UUIDS
+// service UUIDS
 let POLARH7_HRM_DEVICE_INFO_SERVICE_UUID = CBUUID(string: "180A")
 let POLARH7_HRM_HEART_RATE_SERVICE_UUID = CBUUID(string: "180D")
 let POLAR_STRIDE_RSC_SERVICE_UUID = CBUUID(string: "1814")
 let serviceUUIDS = [POLARH7_HRM_HEART_RATE_SERVICE_UUID, POLARH7_HRM_DEVICE_INFO_SERVICE_UUID, POLAR_STRIDE_RSC_SERVICE_UUID]
 
-// second: characteristic UUIDs
+// characteristic UUIDs
 let POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID = CBUUID(string: "2A37")
 let POLARH7_HRM_MANUFACTURER_NAME_CHARACTERISTIC_UUID = CBUUID(string: "2A29")
 let POLAR_STRIDE_RSC_MEASUREMENT_CHARACTERISTIC_UUID = CBUUID(string: "2A53")
@@ -64,7 +64,7 @@ class ViewController: UIViewController {
     var speed: [Double?] = []
     var cadence: [UInt8?] = []
     var indices: [Int] = []
-    var rpe: [Int] = []
+    var rpe: [(TimeInterval,Int)] = []
     
     // should the view present the login screen?
     var showLogin: Bool = true
@@ -83,7 +83,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var endButton: UIButton!
     
     @IBAction func startTime(_ sender: Any) {
-        
+        print("user is: " + userName)
         if !self.timeIsRunning {
             if !self.timeIsPaused {
                 stopButton.isEnabled = true
@@ -103,7 +103,6 @@ class ViewController: UIViewController {
             durationTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(ViewController.updateTime), userInfo: nil, repeats: true)
             recordingTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(ViewController.recordData), userInfo: nil, repeats: true)
             self.timeIsRunning = true
-            recordData()
         }
     }
     
@@ -135,9 +134,10 @@ class ViewController: UIViewController {
         endButton.isEnabled = false
         endButton.isHidden = true
         stopButton.isHidden = false
+        getRpe()
+        customizeWorkoutButton.isEnabled = true
     }
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -145,19 +145,17 @@ class ViewController: UIViewController {
         endButton.isEnabled = false
         endButton.isHidden = true
         
-        // listen for notifications from three sensors
+        // listen for notifications from sensors and other views
         NotificationCenter.default.addObserver(self, selector: #selector(displayHeartRate), name: NSNotification.Name(rawValue: hrmNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(displayRSC), name: NSNotification.Name(rawValue: rscNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(recordRpe), name: NSNotification.Name(rawValue: rpeNotification), object: nil)
         
         // begin scanning for the necessary devices
         if myManager.state == .poweredOn {
-            print("powered on in VC")
             myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
         }
     }
 
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if(showLogin) {
@@ -169,6 +167,14 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // prepare for a new workout
+    func reset() {
+        stopButton.isEnabled = false
+        endButton.isEnabled = false
+        endButton.isHidden = true
+        endWorkout = false
     }
     
     // display a new heart rate
@@ -259,14 +265,19 @@ class ViewController: UIViewController {
         cadence.append(currentCadence)
     }
     
-    func recordRpe() {
+    // store RPE data for writing to file (currentTime defaults to now if it is unspecified)
+    func recordRpe(_ currentTime: TimeInterval = Date.timeIntervalSinceReferenceDate) {
         if let unwrappedRpe = currentRpe {
-        dateTime.append(Date.timeIntervalSinceReferenceDate)
-        rpe.append(unwrappedRpe)
+        dateTime.append(currentTime)
+        rpe.append(currentTime, unwrappedRpe)
         indices.append(dateTime.count)
         heartRate.append(hrm)
         speed.append(currentSpeed)
         cadence.append(currentCadence)
+        }
+        if endWorkout {
+            print("exporting")
+            exportData()
         }
     }
 
@@ -289,37 +300,42 @@ class ViewController: UIViewController {
                     try fileManager.createDirectory(atPath: userDirectoryPath,
                                                     withIntermediateDirectories: false,
                                                     attributes: nil)
+                    print("user directory created")
                 } catch {
                     print("Error creating user folder in documents dir: \(error)")
                 }
-                
-                // give the current file a timestamp
-                let file = CACurrentMediaTime()
-                // name the file with its extension
-                var fileName = String(file) + ".tcx"
-                
-                //write the file
-                do{
-                 try myFileContents.write(toFile: userDirectoryPath.appending(fileName), atomically: true, encoding: String.Encoding.utf8 )
-                 
-                 // alert code in try and catch statements modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
-                 let alertController = UIAlertController(title: "BodyMonitor", message: "Workout Saved!", preferredStyle: .alert)
-                 let actionItem = UIAlertAction(title: "Ok", style: .default)
-                 alertController.addAction(actionItem)
-                 present(alertController, animated: true, completion: nil)
-                 } catch{
-                 let alertController = UIAlertController(title: "BodyMonitor", message: "Save Failed", preferredStyle: .alert)
-                 let actionItem = UIAlertAction(title: "Ok", style: .default)
-                 alertController.addAction(actionItem)
-                 present(alertController, animated: true, completion: nil)
-                 }
             }
-        }
+            
+            // give the current file a timestamp
+            let file = CACurrentMediaTime()
+            // name the file with its extension
+            let fileName = String(file) + ".tcx"
+            
+            //write the file
+            do{
+                print("trying to save")
+                try myFileContents.write(toFile: userDirectoryPath.appending(fileName),atomically: true, encoding: String.Encoding.utf8 )
+                //print("workout saved")
+                // alert code in try and catch statements modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
+                let alertController = UIAlertController(title: "BodyMonitor", message: "Workout Saved!", preferredStyle: .alert)
+                let actionItem = UIAlertAction(title: "Ok", style: .default)
+                 alertController.addAction(actionItem)
+                present(alertController, animated: true, completion: nil)
+                } catch{
+                //print("save failed")
+                let alertController = UIAlertController(title: "BodyMonitor", message: "Save Failed", preferredStyle: .alert)
+                let actionItem = UIAlertAction(title: "Ok", style: .default)
+                 alertController.addAction(actionItem)
+                present(alertController, animated: true, completion: nil)
+                }
+            }
+        print("resetting")
+        reset()
     }
     
     // query for RPE
     func getRpe() {
-        //endWorkout = true
+        endWorkout = true
         // show the new screen over the current one; time will keep running, etc.
         self.performSegue(withIdentifier: "rpeSegue", sender: self)
         // wait for child view to disappear, then export data
