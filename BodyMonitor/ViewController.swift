@@ -9,7 +9,6 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
-import MessageUI
 
 // global variables based off BLE specifications
 // service UUIDS
@@ -302,6 +301,11 @@ class ViewController: UIViewController {
                                                     attributes: nil)
                     print("user directory created")
                 } catch {
+                    // alert code modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
+                    let alertController = UIAlertController(title: "BodyMonitor", message: "Save Failed", preferredStyle: .alert)
+                    let actionItem = UIAlertAction(title: "Ok", style: .default)
+                    alertController.addAction(actionItem)
+                    present(alertController, animated: true, completion: nil)
                     print("Error creating user folder in documents dir: \(error)")
                 }
             }
@@ -315,14 +319,12 @@ class ViewController: UIViewController {
             do{
                 print("trying to save")
                 try myFileContents.write(toFile: userDirectoryPath.appending(fileName),atomically: true, encoding: String.Encoding.utf8 )
-                //print("workout saved")
                 // alert code in try and catch statements modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
                 let alertController = UIAlertController(title: "BodyMonitor", message: "Workout Saved!", preferredStyle: .alert)
                 let actionItem = UIAlertAction(title: "Ok", style: .default)
                  alertController.addAction(actionItem)
                 present(alertController, animated: true, completion: nil)
                 } catch{
-                //print("save failed")
                 let alertController = UIAlertController(title: "BodyMonitor", message: "Save Failed", preferredStyle: .alert)
                 let actionItem = UIAlertAction(title: "Ok", style: .default)
                  alertController.addAction(actionItem)
@@ -338,9 +340,5 @@ class ViewController: UIViewController {
         endWorkout = true
         // show the new screen over the current one; time will keep running, etc.
         self.performSegue(withIdentifier: "rpeSegue", sender: self)
-        // wait for child view to disappear, then export data
-        /*while (currentRpe == nil) {
-            continue
-        }*/
     }
 }

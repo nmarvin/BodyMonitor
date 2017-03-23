@@ -22,7 +22,7 @@
 		ADA3FF321E061B2000F18301 /* BodyMonitorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF311E061B2000F18301 /* BodyMonitorUITests.swift */; };
 		ADA3FF401E06259700F18301 /* MyCentralManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */; };
 		ADA5DC871E720A7E0072CF12 /* RunningWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = ADA5DC861E720A7E0072CF12 /* RunningWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */; };
+		ADA735E91E4CD492008C7ADB /* GPXFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA735E81E4CD492008C7ADB /* GPXFileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,7 +96,7 @@
 		ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyCentralManagerDelegate.swift; sourceTree = "<group>"; };
 		ADA5DC7A1E720A7E0072CF12 /* RunningWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADA5DC861E720A7E0072CF12 /* RunningWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "RunningWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCXFileManager.swift; sourceTree = "<group>"; };
+		ADA735E81E4CD492008C7ADB /* GPXFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GPXFileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,7 +169,7 @@
 				AD83F2A71E7D8CF100BFA723 /* LoginViewController.swift */,
 				ADA3FF1A1E061B1F00F18301 /* LaunchScreen.storyboard */,
 				ADA3FF1D1E061B1F00F18301 /* Info.plist */,
-				ADA735E81E4CD492008C7ADB /* TCXFileManager.swift */,
+				ADA735E81E4CD492008C7ADB /* GPXFileManager.swift */,
 			);
 			path = BodyMonitor;
 			sourceTree = "<group>";
@@ -393,7 +393,7 @@
 				ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */,
 				AD83F2A81E7D8CF100BFA723 /* LoginViewController.swift in Sources */,
 				AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */,
-				ADA735E91E4CD492008C7ADB /* TCXFileManager.swift in Sources */,
+				ADA735E91E4CD492008C7ADB /* GPXFileManager.swift in Sources */,
 				ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */,
 				AD72316D1E5DE31D00A37BD5 /* SetWorkoutViewController.swift in Sources */,
 				AD72316F1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift in Sources */,
