@@ -22,8 +22,8 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
     // called when a peripheral's services are discovered
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         
-        if let realError = error {
-            print("error: \(realError)")
+        if let theError = error {
+            print("error: \(theError)")
         }
         if let services = peripheral.services {
             if services.count > 0 {
@@ -100,11 +100,13 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         var buffer = [UInt8](repeating: 0x0, count: currentRsc.count)
         currentRsc.copyBytes(to: &buffer, count: buffer.count)
         
-        // get speed: UInt16
-        var myCurrentSpeed = Double((Int(buffer[2]) << 8) + Int(buffer[1]))
+        // get speed: UInt16 --> this has a precision of 1/256, so the decimal must go between the first and the second byte.
+        let theCurrentSpeed = (UInt16(buffer[2]) << 8) + UInt16(buffer[1])
+        let newSpeed = Double(theCurrentSpeed)
+        let myCurrentSpeed = newSpeed / 256.0
         
         // get cadence: UInt8
-        var myCurrentCadence = buffer[3]
+        let myCurrentCadence = UInt8(buffer[3])
         
         var myCurrentStrideLength: Double? = nil
         var myTotalDistance: Double? = nil
@@ -112,7 +114,7 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         // get instantaneous stride length and total distance
         if (buffer[0] & 0b00000001 == 1) {
             if buffer.count >= 4 {
-                var myStrideLength = Int(buffer[4]) << 8 + Int(buffer[3])
+                let myStrideLength = Int(buffer[4]) << 8 + Int(buffer[3])
                 myCurrentStrideLength = Double(myStrideLength)
             }
             if (buffer[0] & 0b00000010 == 1) {

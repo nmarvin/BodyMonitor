@@ -51,6 +51,7 @@ class ViewController: UIViewController {
     var startTime = TimeInterval()
     var pauseTime = TimeInterval()
     var totalPausedTime = TimeInterval()
+    var rpeTime = TimeInterval()
     // variables for keeping time
     var hours: Int = 0
     var minutes: Int = 0
@@ -61,8 +62,8 @@ class ViewController: UIViewController {
     var dateTime: [TimeInterval] = []
     var heartRate: [UInt8?] = []
     var speed: [Double?] = []
+    var distance: [Double?] = []
     var cadence: [UInt8?] = []
-    var indices: [Int] = []
     var rpe: [(TimeInterval,Int)] = []
     
     // should the view present the login screen?
@@ -82,7 +83,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var endButton: UIButton!
     
     @IBAction func startTime(_ sender: Any) {
-        print("user is: " + userName)
         if !self.timeIsRunning {
             if !self.timeIsPaused {
                 stopButton.isEnabled = true
@@ -116,14 +116,10 @@ class ViewController: UIViewController {
             stopButton.isEnabled = false
             endButton.isHidden = false
             endButton.isEnabled = true
-            //stopButtonLabel.setTitle("End", for: .normal)
-            //print("Length of date array: \(dateTime.count)")
-            //print("Length of hrm array: \(heartRate.count)")
-            //print("Length of cadence array: \(cadence.count)")
-            //print("Length of speed array: \(speed.count)")
         }
         else {
             // query for RPE
+            rpeTime = Date.timeIntervalSinceReferenceDate
             getRpe()
             customizeWorkoutButton.isEnabled = true
         }
@@ -133,6 +129,7 @@ class ViewController: UIViewController {
         endButton.isEnabled = false
         endButton.isHidden = true
         stopButton.isHidden = false
+        rpeTime = Date.timeIntervalSinceReferenceDate
         getRpe()
         customizeWorkoutButton.isEnabled = true
     }
@@ -261,18 +258,20 @@ class ViewController: UIViewController {
         dateTime.append(Date.timeIntervalSinceReferenceDate)
         heartRate.append(hrm)
         speed.append(currentSpeed)
+        distance.append(currentTotalDistance)
         cadence.append(currentCadence)
     }
     
-    // store RPE data for writing to file (currentTime defaults to now if it is unspecified)
-    func recordRpe(_ currentTime: TimeInterval = Date.timeIntervalSinceReferenceDate) {
+    // store RPE data for writing to file
+    func recordRpe() {
         if let unwrappedRpe = currentRpe {
-        dateTime.append(currentTime)
-        rpe.append(currentTime, unwrappedRpe)
-        indices.append(dateTime.count)
+        dateTime.append(rpeTime)
+        rpe.append((rpeTime, unwrappedRpe))
         heartRate.append(hrm)
         speed.append(currentSpeed)
+        distance.append(currentTotalDistance)
         cadence.append(currentCadence)
+        print("rpe updated")
         }
         if endWorkout {
             print("exporting")
@@ -283,10 +282,9 @@ class ViewController: UIViewController {
     // write data to a file
     func exportData() {
         // since we want the user to access her/his file, store in Documents/
-        print("Data export")
-        
         // build a long, long string
-        let myFileContents = "test file"
+        let gpxManager = GPXFileManager()
+        let myFileContents = gpxManager.toGpx(dateArray: dateTime, heartRateArray: heartRate, speedArray: speed, distanceArray: distance, cadenceArray: cadence, rpeArray: rpe)
         
         // code for directory creation modivied from http://stackoverflow.com/questions/1762836/create-a-folder-inside-documents-folder-in-ios-apps
         // get the path to "Documents", where user data should be stored
@@ -299,7 +297,6 @@ class ViewController: UIViewController {
                     try fileManager.createDirectory(atPath: userDirectoryPath,
                                                     withIntermediateDirectories: false,
                                                     attributes: nil)
-                    print("user directory created")
                 } catch {
                     // alert code modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
                     let alertController = UIAlertController(title: "BodyMonitor", message: "Save Failed", preferredStyle: .alert)
@@ -313,12 +310,11 @@ class ViewController: UIViewController {
             // give the current file a timestamp
             let file = CACurrentMediaTime()
             // name the file with its extension
-            let fileName = String(file) + ".tcx"
+            let fileName = String(file) + ".gpx"
             
             //write the file
             do{
-                print("trying to save")
-                try myFileContents.write(toFile: userDirectoryPath.appending(fileName),atomically: true, encoding: String.Encoding.utf8 )
+                try myFileContents.write(toFile: userDirectoryPath.appending("/" + userName + fileName),atomically: true, encoding: String.Encoding.utf8 )
                 // alert code in try and catch statements modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
                 let alertController = UIAlertController(title: "BodyMonitor", message: "Workout Saved!", preferredStyle: .alert)
                 let actionItem = UIAlertAction(title: "Ok", style: .default)
@@ -331,7 +327,6 @@ class ViewController: UIViewController {
                 present(alertController, animated: true, completion: nil)
                 }
             }
-        print("resetting")
         reset()
     }
     

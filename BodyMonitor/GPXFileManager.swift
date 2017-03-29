@@ -13,8 +13,15 @@ class GPXFileManager {
     func toGpx(dateArray: [TimeInterval], heartRateArray: [UInt8?], speedArray: [Double?], distanceArray: [Double?], cadenceArray: [UInt8?], rpeArray: [(TimeInterval, Int)]) -> String {
         let tab = "  "
         let headerString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"BodyMonitor\"\n" + tab + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n" + tab + "xmlns:ns2=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n" + tab + "xmlns:ns3=\"http://www.cluetrust.com/Schemas/gpxdata10.xsd\"\n" + tab + "xmlns:ns4=\"BodyMonitorRpeSpec\"\n" + tab + tab + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-        let lapStartTime = String(dateArray[0])
-        let metaData = "\n" + tab + "<metadata>\n" + tab + tab + "<text><BodyMonitor></text>\n" + tab + tab + "<time>" + lapStartTime + "</time>+\n" + tab + "</metadata>"
+        
+        // format the start time
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let lapStartTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:dateArray[0]))
+        
+        let metaData = "\n" + tab + "<metadata>\n" + tab + tab + "<text><BodyMonitor></text>\n" + tab + tab + "<time>" + lapStartTime + "</time>\n" + tab + "</metadata>"
         
         let totalTimeSeconds = "0"
         // calculate total time in seconds--make sure to account for paused time
@@ -40,9 +47,9 @@ class GPXFileManager {
         let startSeg = "\n" + tab + "<trk>\n" + tab + tab + "<type>running</type>\n"  + tab + tab + "<trkseg>"
         
         // a string for the file contents
-        var gpxData = headerString + metaData
+        var gpxData = headerString + metaData + startSeg
         // the number of tabs to insert before points
-        var tabDepth = 3
+        let tabDepth = 3
     
         var currentIndexRpe = 0
         var theRpe = rpeArray[currentIndexRpe]
@@ -63,14 +70,15 @@ class GPXFileManager {
                 gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], tabDepth: tabDepth, tab: tab)
             }
         }
-        // end the file TODO: do I need EOF?
+        // end the file
         let closingTags = "\n" + tab + tab + "</trkseg>\n" + tab + "</trk>\n</gpx>"
         return gpxData + closingTags
     }
     
-    func createTrackPoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, tabDepth: Int, tab: String) -> String {
+    private func createTrackPoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, tabDepth: Int, tab: String) -> String {
         var localTabDepth = tabDepth
-        var trkPoint = "/n<trkpt>"
+        var trkPoint = "\n"
+        trkPoint = addTabs(trkPoint, tab, localTabDepth) + "<trkpt>"
         
         // add Time
         let dateFormatter = DateFormatter()
@@ -85,7 +93,7 @@ class GPXFileManager {
         // add DistanceMeters
         if let theDistance = distance {
             trkPoint = trkPoint + "\n"
-            trkPoint = addTabs(trkPoint, tab, localTabDepth)
+            trkPoint = trkPoint + addTabs(trkPoint, tab, localTabDepth)
             /*for _ in 1...localTabDepth {
              trkPoint = trkPoint + tab
              }*/
@@ -108,7 +116,7 @@ class GPXFileManager {
         if let theHeartRate = heartRate {
             trkPoint = trkPoint + "\n"
             trkPoint = addTabs(trkPoint, tab, localTabDepth)
-            trkPoint = "<ns2:hr>" + String(theHeartRate) + "</ns2:hr>"
+            trkPoint = trkPoint + "<ns2:hr>" + String(theHeartRate) + "</ns2:hr>"
         }
         // add Cadence
         if let theCadence = cadence {
@@ -130,14 +138,15 @@ class GPXFileManager {
         
         trkPoint = trkPoint + "\n"
         trkPoint = addTabs(trkPoint, tab, localTabDepth)
-        trkPoint = trkPoint + "\n</trkpt>"
+        trkPoint = trkPoint + "</trkpt>"
         
         return trkPoint
     }
     
-    func createRpePoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, rpe: Int, tabDepth: Int, tab: String) -> String {
+    private func createRpePoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, rpe: Int, tabDepth: Int, tab: String) -> String {
         var localTabDepth = tabDepth
-        var rpePoint = "/n<trkpt>"
+        var rpePoint = "\n"
+        rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<trkpt>"
         
         // add Time
         let dateFormatter = DateFormatter()
@@ -153,9 +162,6 @@ class GPXFileManager {
         if let theDistance = distance {
             rpePoint = rpePoint + "\n"
             rpePoint = addTabs(rpePoint, tab, localTabDepth)
-            /*for _ in 1...localTabDepth {
-                rpePoint = rpePoint + tab
-            }*/
             rpePoint = rpePoint + "<DistanceMeters>" + String(theDistance) + "</DistanceMeters>"
         }
         // add extensions
@@ -173,7 +179,7 @@ class GPXFileManager {
         if let theHeartRate = heartRate {
             rpePoint = rpePoint + "\n"
             rpePoint = addTabs(rpePoint, tab, localTabDepth)
-            rpePoint = "<ns2:hr>" + String(theHeartRate) + "</ns2:hr>"
+            rpePoint = rpePoint + "<ns2:hr>" + String(theHeartRate) + "</ns2:hr>"
         }
         // add Cadence
         if let theCadence = cadence {
@@ -189,9 +195,7 @@ class GPXFileManager {
         
         // add RPE
         rpePoint = rpePoint + "\n"
-        for _ in 1...localTabDepth {
-            rpePoint = rpePoint + tab
-        }
+        rpePoint = addTabs(rpePoint, tab, localTabDepth)
         rpePoint = rpePoint + "<ns4:TrackPointExtension>"
         localTabDepth = localTabDepth + 1
         
@@ -212,12 +216,12 @@ class GPXFileManager {
         
         rpePoint = rpePoint + "\n"
         rpePoint = addTabs(rpePoint, tab, localTabDepth)
-        rpePoint = rpePoint + "\n</trkpt>"
+        rpePoint = rpePoint + "</trkpt>"
         
         return rpePoint
     }
     
-    func addTabs(_ s: String, _ tab: String, _ tabs: Int) -> String {
+    private func addTabs(_ s: String, _ tab: String, _ tabs: Int) -> String {
         var newString = s
         for _ in 1...tabs {
             newString = newString + tab

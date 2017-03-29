@@ -23,6 +23,7 @@ class RpeViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
         if(currentRow >= 0) {
             dismiss(animated: true, completion: nil)
             // send rpe: currentRow + 1
+            currentRpe = currentRow + 1
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: rpeNotification), object: nil)
         }
     }
