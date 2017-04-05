@@ -13,6 +13,7 @@
 		AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */; };
 		AD83F2A81E7D8CF100BFA723 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD83F2A71E7D8CF100BFA723 /* LoginViewController.swift */; };
 		AD9527E01E6088B700FE6818 /* RpeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9527DF1E6088B700FE6818 /* RpeViewController.swift */; };
+		ADA1109A1E904A460092FA9F /* MyCoreLocationManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA110991E904A460092FA9F /* MyCoreLocationManagerDelegate.swift */; };
 		ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF111E061B1F00F18301 /* AppDelegate.swift */; };
 		ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3FF131E061B1F00F18301 /* ViewController.swift */; };
 		ADA3FF171E061B1F00F18301 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ADA3FF151E061B1F00F18301 /* Main.storyboard */; };
@@ -80,6 +81,7 @@
 		AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPeripheralDelegate.swift; sourceTree = "<group>"; };
 		AD83F2A71E7D8CF100BFA723 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		AD9527DF1E6088B700FE6818 /* RpeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RpeViewController.swift; sourceTree = "<group>"; };
+		ADA110991E904A460092FA9F /* MyCoreLocationManagerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyCoreLocationManagerDelegate.swift; sourceTree = "<group>"; };
 		ADA3FF0E1E061B1F00F18301 /* BodyMonitor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BodyMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADA3FF111E061B1F00F18301 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ADA3FF131E061B1F00F18301 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				AD72316C1E5DE31D00A37BD5 /* SetWorkoutViewController.swift */,
 				ADA3FF111E061B1F00F18301 /* AppDelegate.swift */,
 				ADA3FF131E061B1F00F18301 /* ViewController.swift */,
+				ADA110991E904A460092FA9F /* MyCoreLocationManagerDelegate.swift */,
 				ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */,
 				AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */,
 				ADA3FF151E061B1F00F18301 /* Main.storyboard */,
@@ -390,6 +393,7 @@
 				AD7231711E5F34F500A37BD5 /* AllowedCharsTextField.swift in Sources */,
 				ADA3FF401E06259700F18301 /* MyCentralManagerDelegate.swift in Sources */,
 				AD9527E01E6088B700FE6818 /* RpeViewController.swift in Sources */,
+				ADA1109A1E904A460092FA9F /* MyCoreLocationManagerDelegate.swift in Sources */,
 				ADA3FF141E061B1F00F18301 /* ViewController.swift in Sources */,
 				AD83F2A81E7D8CF100BFA723 /* LoginViewController.swift in Sources */,
 				AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */,

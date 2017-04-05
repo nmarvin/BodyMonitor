@@ -48,8 +48,6 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         central.stopScan()
         let id = String(describing: peripheral.identifier)
-        print("Identifier: ", id)
-        print("Name: ", peripheral.name)
         tempPeripheral = peripheral
         tempPeripheral.delegate = myPeripheralDelegate
         //central.connect(tempPeripheral, options: nil)
@@ -57,7 +55,6 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         if let device = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey)
             as? String
         {
-        print("Device name : \(device)")
             // identify heart rate monitor
             if device.contains("Polar H7") {
                 if let permanentPeripheral = storePeripheral(peripheral, isHeartSensor: true) {
@@ -67,19 +64,12 @@ class MyCentralManagerDelegate: NSObject, CBCentralManagerDelegate, CBPeripheral
         
             else if device.contains("Polar RUN") {
                 if let permanentPeripheral = storePeripheral(peripheral, isHeartSensor: false) {
-                    print("pod stored")
                     central.connect(permanentPeripheral, options: nil)
-                }
-                else{
-                    print("could not store")
                 }
             }
         }
         if (hrmPeripheral == nil || podPeripheral == nil) {
             startScan(central)
-        }
-        else {
-            print("Both devices connected")
         }
     }
     

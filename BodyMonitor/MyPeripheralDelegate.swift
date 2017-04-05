@@ -112,11 +112,13 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         var myTotalDistance: Double? = nil
         
         // get instantaneous stride length and total distance
+        // first bit indicates stride length is present
         if (buffer[0] & 0b00000001 == 1) {
             if buffer.count >= 4 {
                 let myStrideLength = Int(buffer[4]) << 8 + Int(buffer[3])
                 myCurrentStrideLength = Double(myStrideLength)
             }
+            // second bit indicates total distance is present
             if (buffer[0] & 0b00000010 == 1) {
                 if buffer.count >= 9 {
                     let theDistance = Int(buffer[8]) << 24 + (Int(buffer[7]) << 16) + (Int(buffer[6]) << 8) + Int(buffer[5])
@@ -124,22 +126,24 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
                 }
             }
         }
+        // second bit indicates total distance is present
         else if (buffer[0] & 0b00000010 == 1) {
             if buffer.count >= 7 {
                 let theDistance = Int(buffer[6]) << 24 + (Int(buffer[5]) << 16) + (Int(buffer[4]) << 8) + Int(buffer[3])
-                myTotalDistance = Double(theDistance)
+                myTotalDistance = Double(theDistance) / 10.0 // precision is 1/10 meter
             }
         }
-        
+        // update the global variables
         if peripheral == podPeripheral {
             currentSpeed = myCurrentSpeed
             currentCadence = myCurrentCadence
-            if let stride1 = myCurrentStrideLength {
-                currentStrideLength = stride1
+            
+            // stride length and total distance are optional; only update the global variables with non-nil
+            if let stride = myCurrentStrideLength {
+                currentStrideLength = stride
             }
-            if let distance1 = myTotalDistance {
-                print("Distance: \(distance1)")
-                currentTotalDistance = distance1
+            if let distance = myTotalDistance {
+                currentTotalDistance = distance
             }
             
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: rscNotification), object: nil)

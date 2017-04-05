@@ -10,9 +10,9 @@ import Foundation
 
 class GPXFileManager {
     
-    func toGpx(dateArray: [TimeInterval], heartRateArray: [UInt8?], speedArray: [Double?], distanceArray: [Double?], cadenceArray: [UInt8?], rpeArray: [(TimeInterval, Int)]) -> String {
+    func toGpx(dateArray: [TimeInterval], heartRateArray: [UInt8?], speedArray: [Double?], distanceArray: [Double?], cadenceArray: [UInt8?], latitudeArray: [Double?], longitudeArray: [Double?], altitudeArray: [Double?], rpeArray: [(TimeInterval, Int)]) -> String {
         let tab = "  "
-        let headerString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"BodyMonitor\"\n" + tab + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n" + tab + "xmlns:ns2=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n" + tab + "xmlns:ns3=\"http://www.cluetrust.com/Schemas/gpxdata10.xsd\"\n" + tab + "xmlns:ns4=\"BodyMonitorRpeSpec\"\n" + tab + tab + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+        let headerString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"BodyMonitor\"\n" + tab + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n" + tab + "xmlns:ns2=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n" + tab + "xmlns:ns3=\"http://www.cluetrust.com/Schemas/gpxdata10.xsd\"\n" + tab + "xmlns:ns4=\"BodyMonitorSpec\"\n" + tab + tab + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
         
         // format the start time
         let dateFormatter = DateFormatter()
@@ -21,7 +21,7 @@ class GPXFileManager {
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         let lapStartTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:dateArray[0]))
         
-        let metaData = "\n" + tab + "<metadata>\n" + tab + tab + "<text><BodyMonitor></text>\n" + tab + tab + "<time>" + lapStartTime + "</time>\n" + tab + "</metadata>"
+        let metaData = "\n" + tab + "<metadata>\n" + tab + tab + "<text>BodyMonitor</text>\n" + tab + tab + "<time>" + lapStartTime + "</time>\n" + tab + "</metadata>"
         
         let totalTimeSeconds = "0"
         // calculate total time in seconds--make sure to account for paused time
@@ -57,7 +57,7 @@ class GPXFileManager {
         for i in 0...length {
             // check if this timePoint corresponds to the time of an RPE recording
             if dateArray[i] == theRpe.0 {
-                gpxData = gpxData + createRpePoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], rpe: theRpe.1, tabDepth: tabDepth, tab: tab)
+                gpxData = gpxData + createRpePoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: latitudeArray[i], longitude: longitudeArray[i], altitude: altitudeArray[i], rpe: theRpe.1, tabDepth: tabDepth, tab: tab)
                 
                 // update the RPE point
                 currentIndexRpe += 1
@@ -67,7 +67,7 @@ class GPXFileManager {
             }
             // record a timePoint without RPE
             else {
-                gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], tabDepth: tabDepth, tab: tab)
+                gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: latitudeArray[i], longitude: longitudeArray[i], altitude: altitudeArray[i], tabDepth: tabDepth, tab: tab)
             }
         }
         // end the file
@@ -75,10 +75,22 @@ class GPXFileManager {
         return gpxData + closingTags
     }
     
-    private func createTrackPoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, tabDepth: Int, tab: String) -> String {
+    private func createTrackPoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, latitude: Double?, longitude: Double?, altitude: Double?, tabDepth: Int, tab: String) -> String {
         var localTabDepth = tabDepth
         var trkPoint = "\n"
-        trkPoint = addTabs(trkPoint, tab, localTabDepth) + "<trkpt>"
+        if let theLatitude = latitude, let theLongitude = longitude {
+            trkPoint = addTabs(trkPoint, tab, localTabDepth) + "<trkpt lat=\"\(theLatitude)\"\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth+1) + "lon=\"\(theLongitude)\">"
+        }
+        else {
+            trkPoint = addTabs(trkPoint, tab, localTabDepth) + "<trkpt>"
+        }
+        localTabDepth = localTabDepth + 1
+        // add altitude
+        if let theAltitude = altitude {
+            trkPoint = trkPoint + "\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth) + "<ele>\(theAltitude)</ele>"
+        }
         
         // add Time
         let dateFormatter = DateFormatter()
@@ -94,9 +106,6 @@ class GPXFileManager {
         if let theDistance = distance {
             trkPoint = trkPoint + "\n"
             trkPoint = trkPoint + addTabs(trkPoint, tab, localTabDepth)
-            /*for _ in 1...localTabDepth {
-             trkPoint = trkPoint + tab
-             }*/
             trkPoint = trkPoint + "<DistanceMeters>" + String(theDistance) + "</DistanceMeters>"
         }
         // add extensions
@@ -130,6 +139,23 @@ class GPXFileManager {
         trkPoint = addTabs(trkPoint, tab, localTabDepth)
         trkPoint = trkPoint + "</ns2:TrackPointExtension>"
         
+        // add speed
+        if let theSpeed = speed {
+            trkPoint = trkPoint + "\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth)
+            trkPoint = trkPoint + "<ns4:TrackPointExtension>"
+            localTabDepth = localTabDepth + 1
+            
+            trkPoint = trkPoint + "\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth)
+            trkPoint = trkPoint + "<ns4:speed>" + String(theSpeed) + "</ns4:speed>"
+            localTabDepth = localTabDepth - 1
+            
+            trkPoint = trkPoint + "\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth)
+            trkPoint = trkPoint + "</ns4:TrackPointExtension>"
+        }
+        
         localTabDepth = localTabDepth - 1
         trkPoint = trkPoint + "\n"
         trkPoint = addTabs(trkPoint, tab, localTabDepth)
@@ -143,9 +169,23 @@ class GPXFileManager {
         return trkPoint
     }
     
-    private func createRpePoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, rpe: Int, tabDepth: Int, tab: String) -> String {
+    private func createRpePoint(time: TimeInterval, heartRate: UInt8?, speed: Double?, distance: Double?, cadence: UInt8?, latitude: Double?, longitude: Double?, altitude: Double?, rpe: Int, tabDepth: Int, tab: String) -> String {
         var localTabDepth = tabDepth
         var rpePoint = "\n"
+        if let theLatitude = latitude, let theLongitude = longitude {
+            rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<trkpt lat=\"\(theLatitude)\"\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth+1) + "lon=\"\(theLongitude)\">"
+        }
+        else {
+            rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<trkpt>"
+        }
+        localTabDepth = localTabDepth + 1
+        // add altitude
+        if let theAltitude = altitude {
+            rpePoint = rpePoint + "\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<ele>\(theAltitude)</ele>"
+        }
+        
         rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<trkpt>"
         
         // add Time
@@ -193,11 +233,17 @@ class GPXFileManager {
         rpePoint = addTabs(rpePoint, tab, localTabDepth)
         rpePoint = rpePoint + "</ns2:TrackPointExtension>"
         
-        // add RPE
+        // add speed and RPE
         rpePoint = rpePoint + "\n"
         rpePoint = addTabs(rpePoint, tab, localTabDepth)
         rpePoint = rpePoint + "<ns4:TrackPointExtension>"
         localTabDepth = localTabDepth + 1
+        
+        if let theSpeed = speed {
+            rpePoint = rpePoint + "\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth)
+            rpePoint = rpePoint + "<ns4:speed>" + String(theSpeed) + "</ns4:speed>"
+        }
         
         rpePoint = rpePoint + "\n"
         rpePoint = addTabs(rpePoint, tab, localTabDepth)
@@ -226,6 +272,7 @@ class GPXFileManager {
         for _ in 1...tabs {
             newString = newString + tab
         }
+        
         return newString
     }
 }

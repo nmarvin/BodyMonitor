@@ -28,6 +28,11 @@ let characteristicUUIDS = [POLARH7_HRM_MEASUREMENT_CHARACTERISTIC_UUID, POLARH7_
 let myManagerDelegate = MyCentralManagerDelegate()
 let myManager = CBCentralManager(delegate: myManagerDelegate, queue: nil)
 
+// set up location services
+let myLocationDelegate = MyCoreLocationManagerDelegate()
+let myLocationManager = CLLocationManager()
+
+
 // notification messages
 let hrmNotification = "Heart Rate Updated"
 let rscNotification = "RSC Updated"
@@ -41,8 +46,11 @@ var currentCadence: UInt8? = nil
 var currentStrideLength: Double? = nil
 var currentTotalDistance: Double? = nil
 var currentRpe: Int? = nil
+var currentLatitude: Double? = nil
+var currentLongitude: Double? = nil
+var currentAltitude: Double? = nil
 var endWorkout: Bool = false
-var userName: String = "user"
+var userName: String = ""
 
 class ViewController: UIViewController {
     // instantiate timers
@@ -64,6 +72,9 @@ class ViewController: UIViewController {
     var speed: [Double?] = []
     var distance: [Double?] = []
     var cadence: [UInt8?] = []
+    var latitudes: [Double?] = []
+    var longitudes: [Double?] = []
+    var altitudes: [Double?] = []
     var rpe: [(TimeInterval,Int)] = []
     
     // should the view present the login screen?
@@ -77,7 +88,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var middleSignificantTimeDigit: UILabel!
     @IBOutlet weak var timePunctuation: UILabel!
     @IBOutlet weak var leastSignificantTimeDigit: UILabel!
-    @IBOutlet weak var stopButtonLabel: UIButton!
     @IBOutlet weak var customizeWorkoutButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     @IBOutlet weak var endButton: UIButton!
@@ -94,8 +104,10 @@ class ViewController: UIViewController {
                 
             }
             else {
+                endButton.isEnabled = false
+                endButton.isHidden = true
                 stopButton.isEnabled = true
-                stopButtonLabel.setTitle("Stop", for: .normal)
+                stopButton.isHidden = false
                 totalPausedTime += (Date.timeIntervalSinceReferenceDate - pauseTime)
                 self.timeIsPaused = false
             }
@@ -111,7 +123,7 @@ class ViewController: UIViewController {
             recordingTimer.invalidate()
             pauseTime = Date.timeIntervalSinceReferenceDate
             timeIsRunning = false
-            timeIsPaused = true
+            self.timeIsPaused = true
             stopButton.isHidden = true
             stopButton.isEnabled = false
             endButton.isHidden = false
@@ -146,7 +158,19 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(displayRSC), name: NSNotification.Name(rawValue: rscNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(recordRpe), name: NSNotification.Name(rawValue: rpeNotification), object: nil)
         
-        // begin scanning for the necessary devices
+        // begin tracking location
+        myLocationManager.delegate = myLocationDelegate
+        let status = CLLocationManager.authorizationStatus()
+        if status == CLAuthorizationStatus.authorizedAlways {
+            myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+            myLocationManager.distanceFilter = kCLDistanceFilterNone
+            myLocationManager.startUpdatingLocation()
+        }
+        else if status == .notDetermined {
+            myLocationManager.requestAlwaysAuthorization()
+        }
+        
+        // begin scanning for the necessary devices with Bluetooth
         if myManager.state == .poweredOn {
             myManager.scanForPeripherals(withServices: serviceUUIDS, options: nil)
         }
@@ -182,8 +206,16 @@ class ViewController: UIViewController {
     
     // display data from the foot pod
     func displayRSC() {
-        if let theCurrentSpeed = currentSpeed {
-            speedLabel.text = String(theCurrentSpeed)
+        if let currentSpeedMetersPerSecond = currentSpeed {
+            // convert to mile pace
+            let milesPerSecond = currentSpeedMetersPerSecond / 1609.34
+            if (milesPerSecond > 0) {
+                let secondsPerMile = 1.0 / milesPerSecond
+                let minutesValue = Int(secondsPerMile) / 60
+                let secondsValue = Int(secondsPerMile) - (minutesValue * 60)
+                speedLabel.text = "\(minutesValue):\(String(format:"%02d",secondsValue))"
+            }
+            //speedLabel.text = String(format: "%.2f", currentSpeedMetersPerSecond)
         }
         if let theCurrentCadence = currentCadence {
             cadenceLabel.text = String(theCurrentCadence)
@@ -260,21 +292,39 @@ class ViewController: UIViewController {
         speed.append(currentSpeed)
         distance.append(currentTotalDistance)
         cadence.append(currentCadence)
+        latitudes.append(currentLatitude)
+        longitudes.append(currentLongitude)
+        altitudes.append(currentAltitude)
+        hrm = nil
+        currentSpeed = nil
+        currentTotalDistance = nil
+        currentCadence = nil
+        currentLatitude = nil
+        currentLongitude = nil
+        currentAltitude = nil
     }
     
     // store RPE data for writing to file
     func recordRpe() {
         if let unwrappedRpe = currentRpe {
-        dateTime.append(rpeTime)
-        rpe.append((rpeTime, unwrappedRpe))
-        heartRate.append(hrm)
-        speed.append(currentSpeed)
-        distance.append(currentTotalDistance)
-        cadence.append(currentCadence)
-        print("rpe updated")
+            dateTime.append(rpeTime)
+            rpe.append((rpeTime, unwrappedRpe))
+            heartRate.append(hrm)
+            speed.append(currentSpeed)
+            distance.append(currentTotalDistance)
+            cadence.append(currentCadence)
+            latitudes.append(currentLatitude)
+            longitudes.append(currentLongitude)
+            altitudes.append(currentAltitude)
+            hrm = nil
+            currentSpeed = nil
+            currentTotalDistance = nil
+            currentCadence = nil
+            currentLatitude = nil
+            currentLongitude = nil
+            currentAltitude = nil
         }
         if endWorkout {
-            print("exporting")
             exportData()
         }
     }
@@ -284,7 +334,7 @@ class ViewController: UIViewController {
         // since we want the user to access her/his file, store in Documents/
         // build a long, long string
         let gpxManager = GPXFileManager()
-        let myFileContents = gpxManager.toGpx(dateArray: dateTime, heartRateArray: heartRate, speedArray: speed, distanceArray: distance, cadenceArray: cadence, rpeArray: rpe)
+        let myFileContents = gpxManager.toGpx(dateArray: dateTime, heartRateArray: heartRate, speedArray: speed, distanceArray: distance, cadenceArray: cadence, latitudeArray: latitudes, longitudeArray: longitudes, altitudeArray: altitudes, rpeArray: rpe)
         
         // code for directory creation modivied from http://stackoverflow.com/questions/1762836/create-a-folder-inside-documents-folder-in-ios-apps
         // get the path to "Documents", where user data should be stored
