@@ -54,6 +54,12 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
             
         }
         else if queryType == BY_HR {
+            if let newTargetHeartRate = targetHeartRateText.text {
+                let trimmedTarget = newTargetHeartRate.trimmingCharacters(in: .whitespaces)
+                if let theTarget = UInt8(trimmedTarget) {
+                    targetHeartRate = theTarget
+                }
+            }
             
         }
         dismiss(animated: true, completion: nil)

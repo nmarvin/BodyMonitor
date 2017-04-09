@@ -17,32 +17,12 @@ class GPXFileManager {
         // format the start time
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.Z"
+        dateFormatter.timeZone = NSTimeZone.local
         let lapStartTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:dateArray[0]))
         
         let metaData = "\n" + tab + "<metadata>\n" + tab + tab + "<text>BodyMonitor</text>\n" + tab + tab + "<time>" + lapStartTime + "</time>\n" + tab + "</metadata>"
         
-        let totalTimeSeconds = "0"
-        // calculate total time in seconds--make sure to account for paused time
-        
-        // determine total distance based on final distance point
-        var totalDistance = "0.0"
-        for instantaneousDistance in distanceArray.reversed() {
-            if let theDistance = instantaneousDistance {
-                totalDistance = String(theDistance)
-                break
-            }
-        }
-        // find maximum instantaneous speed
-        var maximumSpeed = 0.0
-        for currentSpeed in speedArray {
-            if let theSpeed = currentSpeed {
-                if theSpeed > maximumSpeed {
-                    maximumSpeed = theSpeed
-                }
-            }
-        }
         // start the track seg
         let startSeg = "\n" + tab + "<trk>\n" + tab + tab + "<type>running</type>\n"  + tab + tab + "<trkseg>"
         
@@ -83,7 +63,7 @@ class GPXFileManager {
             trkPoint = addTabs(trkPoint, tab, localTabDepth+1) + "lon=\"\(theLongitude)\">"
         }
         else {
-            trkPoint = addTabs(trkPoint, tab, localTabDepth) + "<trkpt>"
+            return ""
         }
         localTabDepth = localTabDepth + 1
         // add altitude
@@ -95,8 +75,8 @@ class GPXFileManager {
         // add Time
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.Z"
+        dateFormatter.timeZone = NSTimeZone.local
         let theTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:time))
         trkPoint = trkPoint + "\n"
         trkPoint = addTabs(trkPoint, tab, localTabDepth)
@@ -109,7 +89,9 @@ class GPXFileManager {
             trkPoint = trkPoint + "<DistanceMeters>" + String(theDistance) + "</DistanceMeters>"
         }
         // add extensions
+        var extensionsPresent = false
         if (heartRate != nil || cadence != nil) {
+            extensionsPresent = true
             trkPoint = trkPoint + "\n"
             trkPoint = addTabs(trkPoint, tab, localTabDepth)
             localTabDepth = localTabDepth + 1
@@ -133,12 +115,12 @@ class GPXFileManager {
             trkPoint = addTabs(trkPoint, tab, localTabDepth)
             trkPoint = trkPoint + "<ns2:cad>" + String(theCadence) + "</ns2:cad>"
         }
-        
-        localTabDepth = localTabDepth - 1
-        trkPoint = trkPoint + "\n"
-        trkPoint = addTabs(trkPoint, tab, localTabDepth)
-        trkPoint = trkPoint + "</ns2:TrackPointExtension>"
-        
+        if extensionsPresent {
+            localTabDepth = localTabDepth - 1
+            trkPoint = trkPoint + "\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth)
+            trkPoint = trkPoint + "</ns2:TrackPointExtension>"
+        }
         // add speed
         if let theSpeed = speed {
             trkPoint = trkPoint + "\n"
@@ -177,7 +159,7 @@ class GPXFileManager {
             rpePoint = addTabs(rpePoint, tab, localTabDepth+1) + "lon=\"\(theLongitude)\">"
         }
         else {
-            rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<trkpt>"
+            return ""
         }
         localTabDepth = localTabDepth + 1
         // add altitude
@@ -186,13 +168,11 @@ class GPXFileManager {
             rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<ele>\(theAltitude)</ele>"
         }
         
-        rpePoint = addTabs(rpePoint, tab, localTabDepth) + "<trkpt>"
-        
         // add Time
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.Z"
+        dateFormatter.timeZone = NSTimeZone.local
         let theTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:time))
         rpePoint = rpePoint + "\n"
         rpePoint = addTabs(rpePoint, tab, localTabDepth)
@@ -205,15 +185,19 @@ class GPXFileManager {
             rpePoint = rpePoint + "<DistanceMeters>" + String(theDistance) + "</DistanceMeters>"
         }
         // add extensions
-        rpePoint = rpePoint + "\n"
-        rpePoint = addTabs(rpePoint, tab, localTabDepth)
-        localTabDepth = localTabDepth + 1
-        rpePoint = rpePoint + "<extensions>"
+        var extensionsPresent = false
+        if (heartRate != nil || cadence != nil) {
+            extensionsPresent = true
+            rpePoint = rpePoint + "\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth)
+            localTabDepth = localTabDepth + 1
+            rpePoint = rpePoint + "<extensions>"
         
-        rpePoint = rpePoint + "\n"
-        rpePoint = addTabs(rpePoint, tab, localTabDepth)
-        rpePoint = rpePoint + "<ns2:TrackPointExtension>"
-        localTabDepth = localTabDepth + 1
+            rpePoint = rpePoint + "\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth)
+            rpePoint = rpePoint + "<ns2:TrackPointExtension>"
+            localTabDepth = localTabDepth + 1
+        }
         
         // add HeartRateBpm
         if let theHeartRate = heartRate {
@@ -228,10 +212,18 @@ class GPXFileManager {
             rpePoint = rpePoint + "<ns2:cad>" + String(theCadence) + "</ns2:cad>"
         }
         
-        localTabDepth = localTabDepth - 1
-        rpePoint = rpePoint + "\n"
-        rpePoint = addTabs(rpePoint, tab, localTabDepth)
-        rpePoint = rpePoint + "</ns2:TrackPointExtension>"
+        if extensionsPresent {
+            localTabDepth = localTabDepth - 1
+            rpePoint = rpePoint + "\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth)
+            rpePoint = rpePoint + "</ns2:TrackPointExtension>"
+        }
+        else {
+            rpePoint = rpePoint + "\n"
+            rpePoint = addTabs(rpePoint, tab, localTabDepth)
+            localTabDepth = localTabDepth + 1
+            rpePoint = rpePoint + "<extensions>"
+        }
         
         // add speed and RPE
         rpePoint = rpePoint + "\n"

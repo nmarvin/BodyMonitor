@@ -18,8 +18,8 @@ class MyCoreLocationManagerDelegate: NSObject, CLLocationManagerDelegate {
         if status == .authorizedAlways {
             print("authorized")
             manager.desiredAccuracy = kCLLocationAccuracyBest
-            manager.requestLocation()
-            //manager.startUpdatingLocation()
+            //manager.requestLocation()
+            manager.startUpdatingLocation()
             //print("updating location")
         }
         else {

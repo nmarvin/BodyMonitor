@@ -9,6 +9,7 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
+import AudioToolbox
 
 // global variables based off BLE specifications
 // service UUIDS
@@ -35,8 +36,14 @@ let myLocationManager = CLLocationManager()
 
 // notification messages
 let hrmNotification = "Heart Rate Updated"
+let hrmTargetNotification = "Target Heart Rate Reached"
 let rscNotification = "RSC Updated"
 let rpeNotification = "RPE Updated"
+
+// workout customizability
+var targetHeartRate: UInt8? = nil
+var targetHrHit: Bool = false
+
 
 // display variables for sensor data
 // cadence: unsigned byte (max 254); heart rate: positive byte; speed: double; distance: double
@@ -50,6 +57,7 @@ var currentLatitude: Double? = nil
 var currentLongitude: Double? = nil
 var currentAltitude: Double? = nil
 var endWorkout: Bool = false
+var gettingRpe: Bool = false
 var userName: String = ""
 
 class ViewController: UIViewController {
@@ -94,6 +102,7 @@ class ViewController: UIViewController {
     
     @IBAction func startTime(_ sender: Any) {
         if !self.timeIsRunning {
+            // do all the startup stuff
             if !self.timeIsPaused {
                 stopButton.isEnabled = true
                 customizeWorkoutButton.isEnabled = false
@@ -101,6 +110,11 @@ class ViewController: UIViewController {
                 startTime = Date.timeIntervalSinceReferenceDate
                 // start with no paused time
                 totalPausedTime = startTime - startTime
+                
+                // start listening for target heart rate
+                if let theTarget = targetHeartRate {
+                    NotificationCenter.default.addObserver(self, selector: #selector(getRpe), name: NSNotification.Name(rawValue: hrmTargetNotification), object: nil)
+                }
                 
             }
             else {
@@ -132,6 +146,7 @@ class ViewController: UIViewController {
         else {
             // query for RPE
             rpeTime = Date.timeIntervalSinceReferenceDate
+            endWorkout = true
             getRpe()
             customizeWorkoutButton.isEnabled = true
         }
@@ -148,7 +163,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         stopButton.isEnabled = false
         endButton.isEnabled = false
         endButton.isHidden = true
@@ -306,6 +320,7 @@ class ViewController: UIViewController {
     
     // store RPE data for writing to file
     func recordRpe() {
+        gettingRpe = false
         if let unwrappedRpe = currentRpe {
             dateTime.append(rpeTime)
             rpe.append((rpeTime, unwrappedRpe))
@@ -382,8 +397,12 @@ class ViewController: UIViewController {
     
     // query for RPE
     func getRpe() {
-        endWorkout = true
-        // show the new screen over the current one; time will keep running, etc.
-        self.performSegue(withIdentifier: "rpeSegue", sender: self)
+        if !gettingRpe {
+            gettingRpe = true
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            AudioServicesPlayAlertSound(SystemSoundID(1007))
+            // show the new screen over the current one; time will keep running, etc.
+            self.performSegue(withIdentifier: "rpeSegue", sender: self)
+        }
     }
 }
