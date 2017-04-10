@@ -13,10 +13,11 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     @IBOutlet weak var rpeQueryType: UILabel!
     @IBOutlet weak var rpeQueryPickerView: UIPickerView!
     @IBOutlet weak var askMeLabel: UILabel!
-    @IBOutlet weak var targetHeartRateText: AllowedCharsTextField!
-    @IBOutlet var setTargetHeartRateView: UIView!
-    @IBOutlet weak var hrChildContainer: UIView!
-    @IBOutlet weak var intervalChildContainer: UIView!
+    @IBOutlet weak var targetHeartRateText: UITextField!
+    @IBOutlet weak var intervalPicker: UIDatePicker!
+    @IBOutlet weak var addIntervalButton: UIButton!
+    @IBOutlet weak var deleteIntervalButton: UIButton!
+    @IBOutlet weak var intervalText: UITextView!
     
     let BY_TIME = "By Time Interval"
     let BY_HR = "By Heart Rate"
@@ -25,14 +26,20 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     
     var rpeQueryOptions: [String] = []
     var queryType = "At Workout Conclusion"
+    var currentInterval: TimeInterval = 0.0
+    var cumulativeTime: TimeInterval = 0.0
+    var rpeIntervals: [TimeInterval] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        intervalPicker.countDownDuration = 60
         rpeQueryOptions = [BY_TIME, BY_HR, BY_SPEED, BY_END]
         rpeQueryPickerView.delegate = self
         rpeQueryPickerView.dataSource = self
-        hrChildContainer.isHidden = true
-        intervalChildContainer.isHidden = true
+        targetHeartRateText.isHidden = true
+        intervalPicker.isHidden = true
+        addIntervalButton.isHidden = true
+        deleteIntervalButton.isHidden = true
         //Keyboard dismissal (next three lines of code) modified from Esquarrouth on StackOverflow
         // http://stackoverflow.com/questions/24126678/close-ios-keyboard-by-touching-anywhere-using-swift/35560948
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -46,12 +53,55 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 
     }
+    @IBAction func intervalUpdated(_ sender: Any) {
+        currentInterval = intervalPicker.countDownDuration
+        print("updated: \(currentInterval)")
+    }
+    
+    @IBAction func intervalAdded(_ sender: Any) {
+        print(String(currentInterval))
+        cumulativeTime += currentInterval
+        rpeIntervals.append(cumulativeTime)
+        var minutes = Int(currentInterval)
+        minutes = minutes/60
+        let secondsTime = currentInterval - 60.0 * Double(minutes)
+        let seconds = Int(secondsTime) / 1
+        if let oldText = intervalText.text {
+            intervalText.text = "\(oldText) \n\(String(minutes)):\(String(format:"%02d",seconds))"
+        }
+        else {
+            intervalText.text = "\(String(minutes)):\(String(format:"%02d",seconds))"
+        }
+    }
+    
+    @IBAction func intervalDeleted(_ sender: Any) {
+        if rpeIntervals.count > 0 {
+            let oldInterval = rpeIntervals.remove(at: rpeIntervals.count - 1)
+            if rpeIntervals.count > 0 {
+                cumulativeTime = rpeIntervals[rpeIntervals.count - 1]
+            }
+            else {
+                cumulativeTime = 0.0
+            }
+            // update text view
+            if let theText = intervalText.text {
+                var newText = theText
+                print(newText)
+                while(newText.characters.last != "\n") {
+                    newText.remove(at: newText.index(before: newText.endIndex))
+                }
+                // remove the last newline
+                newText.remove(at: newText.index(before: newText.endIndex))
+                intervalText.text = newText
+            }
+        }
+    }
     
     // when the user presses "Go!", save RPE query method and return to the main screen
     @IBAction func close(_ sender: Any) {
         //TODO: store the preferred RPE query method; set a notification thingy for querying and recording
         if queryType == BY_TIME {
-            
+            targetIntervals = rpeIntervals
         }
         else if queryType == BY_HR {
             if let newTargetHeartRate = targetHeartRateText.text {
@@ -87,17 +137,21 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
         queryType = rpeQueryOptions[row]
         rpeQueryType.text = queryType
         if(queryType == BY_HR) {
-            hrChildContainer.isHidden = false
+            targetHeartRateText.isHidden = false
         }
         else {
-            hrChildContainer.isHidden = true
+            targetHeartRateText.isHidden = true
         }
         
         if(queryType == BY_TIME) {
-            intervalChildContainer.isHidden = false
+            intervalPicker.isHidden = false
+            addIntervalButton.isHidden = false
+            deleteIntervalButton.isHidden = false
         }
         else {
-            intervalChildContainer.isHidden = true
+            intervalPicker.isHidden = true
+            addIntervalButton.isHidden = true
+            deleteIntervalButton.isHidden = true
         }
         
         pickerView.isHidden = true

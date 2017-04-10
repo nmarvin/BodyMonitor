@@ -43,6 +43,8 @@ let rpeNotification = "RPE Updated"
 // workout customizability
 var targetHeartRate: UInt8? = nil
 var targetHrHit: Bool = false
+var targetIntervals: [Double] = []
+var targetTimers: [Timer] = []
 
 
 // display variables for sensor data
@@ -59,6 +61,8 @@ var currentAltitude: Double? = nil
 var endWorkout: Bool = false
 var gettingRpe: Bool = false
 var userName: String = ""
+var timeIsRunning: Bool = false
+var timeIsPaused: Bool = false
 
 class ViewController: UIViewController {
     // instantiate timers
@@ -67,14 +71,13 @@ class ViewController: UIViewController {
     var startTime = TimeInterval()
     var pauseTime = TimeInterval()
     var totalPausedTime = TimeInterval()
+    var totalElapsedTime = TimeInterval()
     var rpeTime = TimeInterval()
     // variables for keeping time
     var hours: Int = 0
     var minutes: Int = 0
     var seconds: Int = 0
     var milliseconds: Int = 0
-    var timeIsRunning: Bool = false
-    var timeIsPaused: Bool = false
     var dateTime: [TimeInterval] = []
     var heartRate: [UInt8?] = []
     var speed: [Double?] = []
@@ -91,7 +94,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var heartRateLabel: UILabel!
     @IBOutlet weak var speedLabel: UILabel!
     @IBOutlet weak var cadenceLabel: UILabel!
-    @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var mostSignificantTimeDigit: UILabel!
     @IBOutlet weak var middleSignificantTimeDigit: UILabel!
     @IBOutlet weak var timePunctuation: UILabel!
@@ -101,16 +103,23 @@ class ViewController: UIViewController {
     @IBOutlet weak var endButton: UIButton!
     
     @IBAction func startTime(_ sender: Any) {
-        if !self.timeIsRunning {
+        if !timeIsRunning {
             // do all the startup stuff
-            if !self.timeIsPaused {
+            if !timeIsPaused {
                 stopButton.isEnabled = true
                 customizeWorkoutButton.isEnabled = false
                 
                 startTime = Date.timeIntervalSinceReferenceDate
-                // start with no paused time
+                // start with no paused time and no elapsed time
                 totalPausedTime = startTime - startTime
+                totalElapsedTime = startTime - startTime
                 
+                // set timers for target intervals
+                if targetIntervals.count > 0 {
+                    for i in 0...targetIntervals.count-1 {
+                        targetTimers.append(Timer.scheduledTimer(timeInterval: targetIntervals[i], target: self, selector: #selector(ViewController.getRpe), userInfo: nil, repeats: false))
+                    }
+                }
                 // start listening for target heart rate
                 if let theTarget = targetHeartRate {
                     NotificationCenter.default.addObserver(self, selector: #selector(getRpe), name: NSNotification.Name(rawValue: hrmTargetNotification), object: nil)
@@ -123,32 +132,40 @@ class ViewController: UIViewController {
                 stopButton.isEnabled = true
                 stopButton.isHidden = false
                 totalPausedTime += (Date.timeIntervalSinceReferenceDate - pauseTime)
-                self.timeIsPaused = false
+                timeIsPaused = false
+                
+                let currentTime = Date.timeIntervalSinceReferenceDate
+                var elapsedTime: TimeInterval = (currentTime - startTime) - totalPausedTime
+                if targetIntervals.count > 0 {
+                    for i in 0...targetIntervals.count-1 {
+                        if(targetIntervals[i] - elapsedTime > 0) {
+                            targetTimers.append(Timer.scheduledTimer(timeInterval: targetIntervals[i] - elapsedTime, target: self, selector: #selector(ViewController.getRpe), userInfo: nil, repeats: false))
+                        }
+                    }
+                }
+                
             }
             durationTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(ViewController.updateTime), userInfo: nil, repeats: true)
             recordingTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(ViewController.recordData), userInfo: nil, repeats: true)
-            self.timeIsRunning = true
+            timeIsRunning = true
         }
     }
     
     @IBAction func stopTime(_ sender: Any) {
-        if self.timeIsRunning {
+        if timeIsRunning {
+            for timer in targetTimers {
+                timer.invalidate()
+            }
             durationTimer.invalidate()
             recordingTimer.invalidate()
             pauseTime = Date.timeIntervalSinceReferenceDate
             timeIsRunning = false
-            self.timeIsPaused = true
+            
+            timeIsPaused = true
             stopButton.isHidden = true
             stopButton.isEnabled = false
             endButton.isHidden = false
             endButton.isEnabled = true
-        }
-        else {
-            // query for RPE
-            rpeTime = Date.timeIntervalSinceReferenceDate
-            endWorkout = true
-            getRpe()
-            customizeWorkoutButton.isEnabled = true
         }
     }
     
@@ -157,6 +174,7 @@ class ViewController: UIViewController {
         endButton.isHidden = true
         stopButton.isHidden = false
         rpeTime = Date.timeIntervalSinceReferenceDate
+        endWorkout = true
         getRpe()
         customizeWorkoutButton.isEnabled = true
     }
@@ -233,9 +251,6 @@ class ViewController: UIViewController {
         }
         if let theCurrentCadence = currentCadence {
             cadenceLabel.text = String(theCurrentCadence)
-        }
-        if let theCurrentTotalDistance = currentTotalDistance {
-            distanceLabel.text = String(theCurrentTotalDistance)
         }
     }
     

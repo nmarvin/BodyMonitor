@@ -86,7 +86,7 @@ class MyPeripheralDelegate: NSObject, CBPeripheralDelegate {
         // check first bit of the buffer. if 0, the heart rate is UInt8; otherwise, it's UInt16
         if buffer[0] & 0b00000001 == 0 {
             hrm = buffer[1]
-            if !targetHrHit {
+            if !targetHrHit && timeIsRunning {
                 if let theTarget = targetHeartRate {
                     if (buffer[1] >= theTarget) {
                         targetHrHit = true
