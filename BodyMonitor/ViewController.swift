@@ -348,8 +348,16 @@ class ViewController: UIViewController {
     func recordRpe() {
         gettingRpe = false
         if let unwrappedRpe = currentRpe {
-            dateTime.append(rpeTime)
-            rpe.append((rpeTime, unwrappedRpe))
+            if(endWorkout) {
+                dateTime.append(rpeTime)
+                rpe.append((rpeTime, unwrappedRpe))
+            }
+            else {
+                let theTime = Date.timeIntervalSinceReferenceDate
+                dateTime.append(theTime)
+                rpe.append((theTime, unwrappedRpe))
+            }
+            
             heartRate.append(hrm)
             speed.append(currentSpeed)
             distance.append(currentTotalDistance)

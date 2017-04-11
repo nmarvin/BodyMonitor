@@ -21,7 +21,6 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     
     let BY_TIME = "By Time Interval"
     let BY_HR = "By Heart Rate"
-    let BY_SPEED = "By Speed"
     let BY_END = "At Workout Conclusion"
     
     var rpeQueryOptions: [String] = []
@@ -33,7 +32,7 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     override func viewDidLoad() {
         super.viewDidLoad()
         intervalPicker.countDownDuration = 60
-        rpeQueryOptions = [BY_TIME, BY_HR, BY_SPEED, BY_END]
+        rpeQueryOptions = [BY_TIME, BY_HR, BY_END]
         rpeQueryPickerView.delegate = self
         rpeQueryPickerView.dataSource = self
         targetHeartRateText.isHidden = true
