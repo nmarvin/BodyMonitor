@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import CoreBluetooth
 import CoreLocation
 import AudioToolbox
@@ -190,6 +191,16 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(displayRSC), name: NSNotification.Name(rawValue: rscNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(recordRpe), name: NSNotification.Name(rawValue: rpeNotification), object: nil)
         
+        // set up notifications (code taken from https://www.hackingwithswift.com/read/21/2/scheduling-notifications-unusernotificationcenter-and-unnotificationrequest)
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+            if granted {
+                print("Yay!")
+            } else {
+                print("D'oh")
+            }
+        }
         // begin tracking location
         myLocationManager.delegate = myLocationDelegate
         let status = CLLocationManager.authorizationStatus()
@@ -416,6 +427,20 @@ class ViewController: UIViewController {
             gettingRpe = true
             AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
             AudioServicesPlayAlertSound(SystemSoundID(1007))
+            
+            // add a notification (code from https://www.hackingwithswift.com/read/21/2/scheduling-notifications-unusernotificationcenter-and-unnotificationrequest)
+            let center = UNUserNotificationCenter.current()
+            let content = UNMutableNotificationContent()
+            content.title = "RPE Interval Hit"
+            content.body = "Enter RPE"
+            content.categoryIdentifier = "alarm"
+            content.sound = UNNotificationSound.default()
+            
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+            center.add(request)
+            
             // show the new screen over the current one; time will keep running, etc.
             self.performSegue(withIdentifier: "rpeSegue", sender: self)
         }
