@@ -36,6 +36,7 @@ let myLocationManager = CLLocationManager()
 
 
 // notification messages
+let workoutNotification = "Workout created"
 let hrmNotification = "Heart Rate Updated"
 let hrmTargetNotification = "Target Heart Rate Reached"
 let rscNotification = "RSC Updated"
@@ -100,15 +101,24 @@ class ViewController: UIViewController {
     @IBOutlet weak var timePunctuation: UILabel!
     @IBOutlet weak var leastSignificantTimeDigit: UILabel!
     @IBOutlet weak var customizeWorkoutButton: UIButton!
+    @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     @IBOutlet weak var endButton: UIButton!
+    @IBOutlet weak var inputRpeButton: UIButton!
     
+    @IBAction func createWorkout(_ sender: Any) {
+        startButton.isEnabled = true
+    }
     @IBAction func startTime(_ sender: Any) {
         if !timeIsRunning {
             // do all the startup stuff
             if !timeIsPaused {
+                startButton.isEnabled = false
                 stopButton.isEnabled = true
+                customizeWorkoutButton.isHidden = true
                 customizeWorkoutButton.isEnabled = false
+                inputRpeButton.isHidden = false
+                inputRpeButton.isEnabled = true
                 
                 startTime = Date.timeIntervalSinceReferenceDate
                 // start with no paused time and no elapsed time
@@ -128,6 +138,7 @@ class ViewController: UIViewController {
                 
             }
             else {
+                startButton.isEnabled = true
                 endButton.isEnabled = false
                 endButton.isHidden = true
                 stopButton.isEnabled = true
@@ -167,6 +178,7 @@ class ViewController: UIViewController {
             stopButton.isEnabled = false
             endButton.isHidden = false
             endButton.isEnabled = true
+            startButton.isEnabled = true
         }
     }
     
@@ -177,14 +189,28 @@ class ViewController: UIViewController {
         rpeTime = Date.timeIntervalSinceReferenceDate
         endWorkout = true
         getRpe()
+        customizeWorkoutButton.isHidden = false
         customizeWorkoutButton.isEnabled = true
+    }
+    @IBAction func manualRpeInput(_ sender: Any) {
+        if !gettingRpe {
+            gettingRpe = true
+            
+            // show the new screen over the current one; time will keep running, etc.
+            self.performSegue(withIdentifier: "rpeSegue", sender: self)
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        startButton.setTitleColor(UIColor.gray, for: UIControlState.disabled)
+        stopButton.setTitleColor(UIColor.gray, for: UIControlState.disabled)
+        startButton.isEnabled = false
         stopButton.isEnabled = false
         endButton.isEnabled = false
         endButton.isHidden = true
+        inputRpeButton.isHidden = true
+        inputRpeButton.isEnabled = false
         
         // listen for notifications from sensors and other views
         NotificationCenter.default.addObserver(self, selector: #selector(displayHeartRate), name: NSNotification.Name(rawValue: hrmNotification), object: nil)
@@ -236,8 +262,13 @@ class ViewController: UIViewController {
     func reset() {
         stopButton.isEnabled = false
         endButton.isEnabled = false
+        startButton.isEnabled = false
         endButton.isHidden = true
         endWorkout = false
+        inputRpeButton.isHidden = true
+        inputRpeButton.isEnabled = false
+        customizeWorkoutButton.isHidden = false
+        customizeWorkoutButton.isEnabled = true
     }
     
     // display a new heart rate

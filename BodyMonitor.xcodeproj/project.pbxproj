@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD3787511EA0002100431495 /* InformationScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3787501EA0002100431495 /* InformationScreenViewController.swift */; };
 		AD72316D1E5DE31D00A37BD5 /* SetWorkoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD72316C1E5DE31D00A37BD5 /* SetWorkoutViewController.swift */; };
 		AD72316F1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD72316E1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift */; };
 		AD7231711E5F34F500A37BD5 /* AllowedCharsTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7231701E5F34F500A37BD5 /* AllowedCharsTextField.swift */; };
@@ -75,6 +76,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AD3787501EA0002100431495 /* InformationScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationScreenViewController.swift; sourceTree = "<group>"; };
 		AD72316C1E5DE31D00A37BD5 /* SetWorkoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetWorkoutViewController.swift; sourceTree = "<group>"; };
 		AD72316E1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldMaxLengths.swift; sourceTree = "<group>"; };
 		AD7231701E5F34F500A37BD5 /* AllowedCharsTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllowedCharsTextField.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				ADA3FF3F1E06259700F18301 /* MyCentralManagerDelegate.swift */,
 				AD7AE1CA1E33F461005284E2 /* MyPeripheralDelegate.swift */,
 				ADA3FF151E061B1F00F18301 /* Main.storyboard */,
+				AD3787501EA0002100431495 /* InformationScreenViewController.swift */,
 				AD9527DF1E6088B700FE6818 /* RpeViewController.swift */,
 				AD7231701E5F34F500A37BD5 /* AllowedCharsTextField.swift */,
 				AD72316E1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift */,
@@ -404,6 +407,7 @@
 				AD7AE1CB1E33F461005284E2 /* MyPeripheralDelegate.swift in Sources */,
 				ADA735E91E4CD492008C7ADB /* GPXFileManager.swift in Sources */,
 				ADA3FF121E061B1F00F18301 /* AppDelegate.swift in Sources */,
+				AD3787511EA0002100431495 /* InformationScreenViewController.swift in Sources */,
 				AD72316D1E5DE31D00A37BD5 /* SetWorkoutViewController.swift in Sources */,
 				AD72316F1E5F33DC00A37BD5 /* TextFieldMaxLengths.swift in Sources */,
 			);

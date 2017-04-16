@@ -12,12 +12,12 @@ class GPXFileManager {
     
     func toGpx(dateArray: [TimeInterval], heartRateArray: [UInt8?], speedArray: [Double?], distanceArray: [Double?], cadenceArray: [UInt8?], latitudeArray: [Double?], longitudeArray: [Double?], altitudeArray: [Double?], rpeArray: [(TimeInterval, Int)]) -> String {
         let tab = "  "
-        let headerString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"BodyMonitor\" version=\"1.1\"\n" + tab + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n" + tab + "xmlns:ns2=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n" + tab + "xmlns:ns3=\"http://www.cluetrust.com/Schemas/gpxdata10.xsd\"\n" + tab + "xmlns:ns4=\"BodyMonitorSpec\"\n" + tab + tab + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+        let headerString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"Stride\" version=\"1.1\"\n" + tab + "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n" + tab + "xmlns:ns2=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n" + tab + "xmlns:ns3=\"http://www.cluetrust.com/Schemas/gpxdata10.xsd\"\n" + tab + "xmlns:ns4=\"StrideSpec\"\n" + tab + tab + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
         
         // format the start time
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.Z"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         dateFormatter.timeZone = NSTimeZone.local
         let lapStartTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:dateArray[0]))
         
@@ -75,7 +75,7 @@ class GPXFileManager {
         // add Time
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.Z"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         dateFormatter.timeZone = NSTimeZone.local
         let theTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:time))
         trkPoint = trkPoint + "\n"
@@ -83,11 +83,11 @@ class GPXFileManager {
         trkPoint = trkPoint + "<time>" + theTime + "</time>"
         
         // add DistanceMeters
-        if let theDistance = distance {
+        /*if let theDistance = distance {
             trkPoint = trkPoint + "\n"
             trkPoint = trkPoint + addTabs(trkPoint, tab, localTabDepth)
             trkPoint = trkPoint + "<DistanceMeters>" + String(theDistance) + "</DistanceMeters>"
-        }
+        }*/
         // add extensions
         var extensionsPresent = false
         if (heartRate != nil || cadence != nil) {
@@ -123,6 +123,13 @@ class GPXFileManager {
         }
         // add speed
         if let theSpeed = speed {
+            if !extensionsPresent {
+                trkPoint = trkPoint + "\n"
+                trkPoint = addTabs(trkPoint, tab, localTabDepth)
+                localTabDepth = localTabDepth + 1
+                trkPoint = trkPoint + "<extensions>"
+            }
+            extensionsPresent = true
             trkPoint = trkPoint + "\n"
             trkPoint = addTabs(trkPoint, tab, localTabDepth)
             trkPoint = trkPoint + "<ns4:TrackPointExtension>"
@@ -137,13 +144,14 @@ class GPXFileManager {
             trkPoint = addTabs(trkPoint, tab, localTabDepth)
             trkPoint = trkPoint + "</ns4:TrackPointExtension>"
         }
+        if extensionsPresent {
+            localTabDepth = localTabDepth - 1
+            trkPoint = trkPoint + "\n"
+            trkPoint = addTabs(trkPoint, tab, localTabDepth)
+            trkPoint = trkPoint + "</extensions>"
+        }
         
         localTabDepth = localTabDepth - 1
-        trkPoint = trkPoint + "\n"
-        trkPoint = addTabs(trkPoint, tab, localTabDepth)
-        trkPoint = trkPoint + "</extensions>"
-        localTabDepth = localTabDepth - 1
-        
         trkPoint = trkPoint + "\n"
         trkPoint = addTabs(trkPoint, tab, localTabDepth)
         trkPoint = trkPoint + "</trkpt>"
@@ -171,7 +179,7 @@ class GPXFileManager {
         // add Time
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.Z"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         dateFormatter.timeZone = NSTimeZone.local
         let theTime = dateFormatter.string(from: Date.init(timeIntervalSinceReferenceDate:time))
         rpePoint = rpePoint + "\n"
@@ -179,11 +187,11 @@ class GPXFileManager {
         rpePoint = rpePoint + "<time>" + theTime + "</time>"
         
         // add DistanceMeters
-        if let theDistance = distance {
+        /*if let theDistance = distance {
             rpePoint = rpePoint + "\n"
             rpePoint = addTabs(rpePoint, tab, localTabDepth)
             rpePoint = rpePoint + "<DistanceMeters>" + String(theDistance) + "</DistanceMeters>"
-        }
+        } */
         // add extensions
         var extensionsPresent = false
         if (heartRate != nil || cadence != nil) {

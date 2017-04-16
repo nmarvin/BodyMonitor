@@ -54,7 +54,6 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     }
     @IBAction func intervalUpdated(_ sender: Any) {
         currentInterval = intervalPicker.countDownDuration
-        print("updated: \(currentInterval)")
     }
     
     @IBAction func intervalAdded(_ sender: Any) {
@@ -109,7 +108,6 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
                     targetHeartRate = theTarget
                 }
             }
-            
         }
         dismiss(animated: true, completion: nil)
     }
