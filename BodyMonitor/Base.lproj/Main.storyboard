@@ -199,10 +199,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aN3-Da-Glh">
-                                <rect key="frame" x="82" y="412" width="156" height="30"/>
+                                <rect key="frame" x="82" y="403" width="156" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal" title="Input RPE"/>
+                                <state key="normal" title="Record RPE"/>
                                 <connections>
                                     <action selector="manualRpeInput:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Afk-Uh-Jx6"/>
                                 </connections>
@@ -303,22 +303,6 @@
                                     <action selector="close:" destination="Np8-j6-Eal" eventType="touchUpInside" id="BPO-Jp-5bS"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Ask me for RPE..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MAO-ww-6qv">
-                                <rect key="frame" x="16" y="49" width="288" height="20.5"/>
-                                <gestureRecognizers/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="dSD-Zq-aTa" appends="YES" id="BV4-65-nG8"/>
-                                </connections>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text=" " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="THP-L4-e9Z">
-                                <rect key="frame" x="16" y="77" width="288" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NJO-9y-HsJ">
                                 <rect key="frame" x="0.0" y="100" width="320" height="145"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -377,29 +361,34 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoDark" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OPo-vE-92X">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoDark" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OPo-vE-92X">
                                 <rect key="frame" x="246" y="57" width="22" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <segue destination="PSp-f4-TOw" kind="popoverPresentation" popoverAnchorView="OPo-vE-92X" id="U0K-gd-Ijz">
                                         <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                                     </segue>
                                 </connections>
                             </button>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Ask me for RPE..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MAO-ww-6qv">
+                                <rect key="frame" x="79" y="57" width="163" height="21"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="dSD-Zq-aTa" appends="YES" id="BV4-65-nG8"/>
+                                </connections>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="THP-L4-e9Z" firstAttribute="trailing" secondItem="7NQ-wL-PSW" secondAttribute="trailingMargin" id="3xS-6v-ryh"/>
-                            <constraint firstItem="THP-L4-e9Z" firstAttribute="top" secondItem="xA9-CH-Ttj" secondAttribute="bottom" constant="80" id="HPa-Gm-pp4"/>
-                            <constraint firstItem="THP-L4-e9Z" firstAttribute="leading" secondItem="7NQ-wL-PSW" secondAttribute="leadingMargin" id="Itt-Rr-rOF"/>
-                            <constraint firstItem="THP-L4-e9Z" firstAttribute="top" secondItem="MAO-ww-6qv" secondAttribute="bottom" constant="8" id="MXz-nb-WYl"/>
                             <constraint firstItem="t6f-Cu-SJc" firstAttribute="top" secondItem="nZX-f1-8U8" secondAttribute="bottom" constant="20" id="QBz-YL-rgz"/>
-                            <constraint firstItem="THP-L4-e9Z" firstAttribute="centerX" secondItem="7NQ-wL-PSW" secondAttribute="centerX" id="bGP-k1-3Ab"/>
-                            <constraint firstItem="MAO-ww-6qv" firstAttribute="centerX" secondItem="7NQ-wL-PSW" secondAttribute="centerX" id="o5X-cZ-fKf"/>
+                            <constraint firstItem="MAO-ww-6qv" firstAttribute="leading" secondItem="7NQ-wL-PSW" secondAttribute="leadingMargin" constant="63" id="jEc-Ef-Uqi"/>
+                            <constraint firstItem="OPo-vE-92X" firstAttribute="top" secondItem="xA9-CH-Ttj" secondAttribute="bottom" constant="37" id="oLs-bt-Vla"/>
                             <constraint firstItem="nZX-f1-8U8" firstAttribute="centerX" secondItem="7NQ-wL-PSW" secondAttribute="centerX" id="shc-cC-XOi"/>
-                            <constraint firstItem="MAO-ww-6qv" firstAttribute="trailing" secondItem="7NQ-wL-PSW" secondAttribute="trailingMargin" id="su4-1T-eI7"/>
-                            <constraint firstItem="MAO-ww-6qv" firstAttribute="leading" secondItem="7NQ-wL-PSW" secondAttribute="leadingMargin" id="u97-3o-4Yb"/>
+                            <constraint firstItem="OPo-vE-92X" firstAttribute="leading" secondItem="MAO-ww-6qv" secondAttribute="trailing" constant="4" id="szo-SH-lke"/>
                             <constraint firstItem="nZX-f1-8U8" firstAttribute="centerX" secondItem="7NQ-wL-PSW" secondAttribute="centerX" id="vBc-Dt-khB"/>
+                            <constraint firstItem="MAO-ww-6qv" firstAttribute="top" secondItem="xA9-CH-Ttj" secondAttribute="bottom" constant="37" id="yDg-db-npP"/>
                         </constraints>
                     </view>
                     <connections>
@@ -409,7 +398,6 @@
                         <outlet property="intervalPicker" destination="NG1-3v-5aD" id="Vt8-0k-1s9"/>
                         <outlet property="intervalText" destination="0hu-ZS-0LX" id="1PE-tM-2ND"/>
                         <outlet property="rpeQueryPickerView" destination="NJO-9y-HsJ" id="SIa-hS-196"/>
-                        <outlet property="rpeQueryType" destination="THP-L4-e9Z" id="wXF-2q-56f"/>
                         <outlet property="targetHeartRateText" destination="HFL-Ns-oW5" id="O4t-AE-DhU"/>
                     </connections>
                 </viewController>

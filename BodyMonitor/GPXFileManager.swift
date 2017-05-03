@@ -37,7 +37,30 @@ class GPXFileManager {
         for i in 0...length {
             // check if this timePoint corresponds to the time of an RPE recording
             if dateArray[i] == theRpe.0 {
-                gpxData = gpxData + createRpePoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: latitudeArray[i], longitude: longitudeArray[i], altitude: altitudeArray[i], rpe: theRpe.1, tabDepth: tabDepth, tab: tab)
+                // find an appropriate latitude/longitude
+                if let theLatitude = latitudeArray[i], let theLongitude = longitudeArray[i] {
+                    gpxData = gpxData + createRpePoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: theLatitude, longitude: theLongitude, altitude: altitudeArray[i], rpe: theRpe.1, tabDepth: tabDepth, tab: tab)
+                }
+                // grab an earlier coordinate
+                else {
+                    var trkPointAdded = false
+                    for j in (0...i).reversed() {
+                    if let theLatitude = latitudeArray[j], let theLongitude = longitudeArray[j] {
+                        gpxData = gpxData + createRpePoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: theLatitude, longitude: theLongitude, altitude: altitudeArray[j], rpe: theRpe.1, tabDepth: tabDepth, tab: tab)
+                        trkPointAdded = true
+                        break
+                        }
+                    }
+                    if !trkPointAdded {
+                        for j in (i...latitudeArray.count - 1) {
+                        if let theLatitude = latitudeArray[j], let theLongitude = longitudeArray[j] {
+                            gpxData = gpxData + createRpePoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: theLatitude, longitude: theLongitude, altitude: altitudeArray[j], rpe: theRpe.1, tabDepth: tabDepth, tab: tab)
+                            trkPointAdded = true
+                            break
+                            }
+                        }
+                    }
+                }
                 
                 // update the RPE point
                 currentIndexRpe += 1
@@ -47,7 +70,30 @@ class GPXFileManager {
             }
             // record a timePoint without RPE
             else {
-                gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: latitudeArray[i], longitude: longitudeArray[i], altitude: altitudeArray[i], tabDepth: tabDepth, tab: tab)
+                if let theLatitude = latitudeArray[i], let theLongitude = longitudeArray[i] {
+                gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: theLatitude, longitude: theLongitude, altitude: altitudeArray[i], tabDepth: tabDepth, tab: tab)
+                }
+                
+                // grab an earlier coordinate
+                else {
+                    var trkPointAdded = false
+                    for j in (0...i).reversed() {
+                        if let theLatitude = latitudeArray[j], let theLongitude = longitudeArray[j] {
+                            gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: theLatitude, longitude: theLongitude, altitude: altitudeArray[j], tabDepth: tabDepth, tab: tab)
+                            trkPointAdded = true
+                            break
+                        }
+                    }
+                    if !trkPointAdded {
+                        for j in (i...latitudeArray.count - 1) {
+                            if let theLatitude = latitudeArray[j], let theLongitude = longitudeArray[j] {
+                                gpxData = gpxData + createTrackPoint(time: dateArray[i], heartRate: heartRateArray[i], speed: speedArray[i], distance: distanceArray[i], cadence: cadenceArray[i], latitude: theLatitude, longitude: theLongitude, altitude: altitudeArray[j], tabDepth: tabDepth, tab: tab)
+                                trkPointAdded = true
+                                break
+                            }
+                        }
+                    }
+                }
             }
         }
         // end the file

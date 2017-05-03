@@ -138,7 +138,7 @@ class ViewController: UIViewController {
                 
             }
             else {
-                startButton.isEnabled = true
+                startButton.isEnabled = false
                 endButton.isEnabled = false
                 endButton.isHidden = true
                 stopButton.isEnabled = true
@@ -147,7 +147,7 @@ class ViewController: UIViewController {
                 timeIsPaused = false
                 
                 let currentTime = Date.timeIntervalSinceReferenceDate
-                var elapsedTime: TimeInterval = (currentTime - startTime) - totalPausedTime
+                let elapsedTime: TimeInterval = (currentTime - startTime) - totalPausedTime
                 if targetIntervals.count > 0 {
                     for i in 0...targetIntervals.count-1 {
                         if(targetIntervals[i] - elapsedTime > 0) {
@@ -183,6 +183,13 @@ class ViewController: UIViewController {
     }
     
     @IBAction func endTime(_ sender: Any) {
+        // invalidate all the timers
+        for timer in targetTimers {
+            timer.invalidate()
+        }
+        durationTimer.invalidate()
+        recordingTimer.invalidate()
+        
         endButton.isEnabled = false
         endButton.isHidden = true
         stopButton.isHidden = false
@@ -370,9 +377,6 @@ class ViewController: UIViewController {
         currentSpeed = nil
         currentTotalDistance = nil
         currentCadence = nil
-        currentLatitude = nil
-        currentLongitude = nil
-        currentAltitude = nil
     }
     
     // store RPE data for writing to file
@@ -400,9 +404,6 @@ class ViewController: UIViewController {
             currentSpeed = nil
             currentTotalDistance = nil
             currentCadence = nil
-            currentLatitude = nil
-            currentLongitude = nil
-            currentAltitude = nil
         }
         if endWorkout {
             exportData()

@@ -10,7 +10,6 @@ import UIKit
 
 class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
-    @IBOutlet weak var rpeQueryType: UILabel!
     @IBOutlet weak var rpeQueryPickerView: UIPickerView!
     @IBOutlet weak var askMeLabel: UILabel!
     @IBOutlet weak var targetHeartRateText: UITextField!
@@ -57,7 +56,6 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     }
     
     @IBAction func intervalAdded(_ sender: Any) {
-        print(String(currentInterval))
         cumulativeTime += currentInterval
         rpeIntervals.append(cumulativeTime)
         var minutes = Int(currentInterval)
@@ -114,12 +112,12 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     
     // when the user wants to change the rpe query method, show the picker
     @IBAction func handleTapWithRecognizer(_ sender: Any) {
-        rpeQueryPickerView.isHidden = !rpeQueryPickerView.isHidden
+        //rpeQueryPickerView.isHidden = !rpeQueryPickerView.isHidden
     }
     
     // when an rpe method is selected, hide the picker
     @IBAction func handleTapSelectQuery(_ sender: Any) {
-        rpeQueryPickerView.isHidden = true
+        //rpeQueryPickerView.isHidden = true
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -132,7 +130,6 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         queryType = rpeQueryOptions[row]
-        rpeQueryType.text = queryType
         if(queryType == BY_HR) {
             targetHeartRateText.isHidden = false
         }
@@ -151,7 +148,7 @@ class SetWorkoutViewController: UIViewController, UIPickerViewDataSource, UIPick
             deleteIntervalButton.isHidden = true
         }
         
-        pickerView.isHidden = true
+        //pickerView.isHidden = true
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
