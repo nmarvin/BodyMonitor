@@ -12,7 +12,7 @@ class RpeViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
 
     @IBOutlet weak var rpePickerView: UIPickerView!
     let rpeOptions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-    var currentRow = -1
+    var currentRow = 1
     override func viewDidLoad() {
         super.viewDidLoad()
         rpePickerView.delegate = self

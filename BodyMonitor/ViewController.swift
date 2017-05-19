@@ -416,6 +416,15 @@ class ViewController: UIViewController {
         // build a long, long string
         let gpxManager = GPXFileManager()
         let myFileContents = gpxManager.toGpx(dateArray: dateTime, heartRateArray: heartRate, speedArray: speed, distanceArray: distance, cadenceArray: cadence, latitudeArray: latitudes, longitudeArray: longitudes, altitudeArray: altitudes, rpeArray: rpe)
+       /* var myFileContents2 = ""
+        for i in 0...heartRate.count - 1 {
+            if let theHeartRate = heartRate[i] {
+                myFileContents2 = myFileContents2 + "\(theHeartRate)"
+                if i < heartRate.count - 1 {
+                    myFileContents2 = myFileContents2 + ", "
+                }
+            }
+        }*/
         
         // code for directory creation modivied from http://stackoverflow.com/questions/1762836/create-a-folder-inside-documents-folder-in-ios-apps
         // get the path to "Documents", where user data should be stored
@@ -442,10 +451,12 @@ class ViewController: UIViewController {
             let file = CACurrentMediaTime()
             // name the file with its extension
             let fileName = String(file) + ".gpx"
+            /*let fileName2 = String(file) + ".csv"*/
             
             //write the file
             do{
                 try myFileContents.write(toFile: userDirectoryPath.appending("/" + userName + fileName),atomically: true, encoding: String.Encoding.utf8 )
+                /*try myFileContents2.write(toFile: userDirectoryPath.appending("/" + userName + fileName2),atomically: true, encoding: String.Encoding.utf8 )*/
                 // alert code in try and catch statements modified from Brian Moakley's Beginning iOS 10 Part 1 Getting Started: Alerting the user https://videos.raywenderlich.com/courses/beginning-ios-10-part-1-getting-started/lessons/6
                 let alertController = UIAlertController(title: "BodyMonitor", message: "Workout Saved!", preferredStyle: .alert)
                 let actionItem = UIAlertAction(title: "Ok", style: .default)
